@@ -20,12 +20,23 @@ Set these variables in `.env`:
 
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` for database seeding
 
 3. Start the development server:
 
 ```bash
 npm run dev
 ```
+
+## Seed Sample Data
+
+The database can be seeded with sample categories and recipes using the current Supabase auth users:
+
+```bash
+npm run seed
+```
+
+The seed script expects a service role key in `.env` because it reads auth users and writes directly to the database.
 
 ## Pages
 
