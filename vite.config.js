@@ -5,7 +5,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        home: resolve(__dirname, 'pages/index.html'),
+        home: resolve(__dirname, 'index.html'),
         register: resolve(__dirname, 'pages/register.html'),
         login: resolve(__dirname, 'pages/login.html'),
         recipeDetails: resolve(__dirname, 'pages/recipe-details.html'),
@@ -16,6 +16,6 @@ export default defineConfig({
     },
   },
   server: {
-    open: '/pages/index.html',
+    open: '/',
   },
 });

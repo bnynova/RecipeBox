@@ -1,5 +1,5 @@
 const NAV_ITEMS = [
-  { key: 'home', label: 'Home', href: '/pages/index.html' },
+  { key: 'home', label: 'Home', href: '/' },
   { key: 'recipe-form', label: 'Add Recipe', href: '/pages/recipe-form.html' },
   { key: 'profile', label: 'Profile', href: '/pages/profile.html' },
   { key: 'admin', label: 'Admin', href: '/pages/admin.html', requiresRole: 'admin' },
@@ -29,12 +29,12 @@ export function createNavbar({ activePage = 'home', isAuthenticated = false, rol
 
   const authAction = isAuthenticated
     ? '<button class="btn btn-outline-light ms-lg-3" type="button" data-auth-action="logout">Logout</button>'
-    : '<a class="btn btn-light ms-lg-3" href="/pages/login.html">Login</a>';
+    : '<div class="d-flex flex-column flex-lg-row gap-2 ms-lg-3"><a class="btn btn-outline-light" href="/pages/register.html">Register</a><a class="btn btn-light" href="/pages/login.html">Login</a></div>';
 
   return `
     <nav class="navbar navbar-expand-lg navbar-dark app-navbar">
       <div class="container">
-        <a class="navbar-brand fw-bold text-uppercase" href="/pages/index.html">RecipeBox</a>
+        <a class="navbar-brand fw-bold text-uppercase" href="/">RecipeBox</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#recipeBoxNav" aria-controls="recipeBoxNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
