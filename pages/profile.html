@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecipeBox | Profile</title>
+  </head>
+  <body data-page="profile" data-authenticated="false" data-role="normal">
+    <div data-navbar-root></div>
+    <main class="page-shell">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <section class="page-panel text-center">
+              <div class="rounded-circle bg-secondary-subtle mx-auto mb-3" style="width: 96px; height: 96px;"></div>
+              <h1 class="h4 mb-1">Your profile</h1>
+              <p class="text-secondary mb-0">Profile data will be loaded from Supabase later.</p>
+            </section>
+          </div>
+          <div class="col-lg-8">
+            <section class="page-panel">
+              <p class="soft-label mb-2">Account settings</p>
+              <h2 class="h4 mb-3">Profile details</h2>
+              <form class="d-grid gap-3">
+                <div>
+                  <label class="form-label" for="profile-name">Display name</label>
+                  <input id="profile-name" class="form-control" type="text" placeholder="Jane Doe" />
+                </div>
+                <div>
+                  <label class="form-label" for="profile-bio">Bio</label>
+                  <textarea id="profile-bio" class="form-control" rows="4" placeholder="Tell other cooks about yourself..."></textarea>
+                </div>
+                <button class="btn btn-primary" type="submit">Save profile</button>
+              </form>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+    <div data-footer-root></div>
+    <script type="module" src="../src/main.js"></script>
+  </body>
+</html>

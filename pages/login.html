@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecipeBox | Login</title>
+  </head>
+  <body data-page="login" data-authenticated="false" data-role="normal">
+    <div data-navbar-root></div>
+    <main class="page-shell">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-5">
+            <section class="page-panel">
+              <p class="soft-label mb-2">Welcome back</p>
+              <h1 class="h3 mb-4">Sign in to RecipeBox</h1>
+              <form class="d-grid gap-3">
+                <div>
+                  <label class="form-label" for="login-email">Email</label>
+                  <input id="login-email" class="form-control" type="email" placeholder="jane@example.com" />
+                </div>
+                <div>
+                  <label class="form-label" for="login-password">Password</label>
+                  <input id="login-password" class="form-control" type="password" placeholder="Your password" />
+                </div>
+                <button class="btn btn-primary" type="submit">Login</button>
+              </form>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+    <div data-footer-root></div>
+    <script type="module" src="../src/main.js"></script>
+  </body>
+</html>

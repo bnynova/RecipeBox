@@ -1,0 +1,124 @@
+:root {
+  color-scheme: light;
+  --rb-bg: #f4efe8;
+  --rb-surface: #fffaf4;
+  --rb-surface-strong: #ffffff;
+  --rb-text: #241b16;
+  --rb-muted: #6f6258;
+  --rb-accent: #c45f2d;
+  --rb-accent-dark: #9b4720;
+  --rb-border: rgba(36, 27, 22, 0.1);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--rb-text);
+  background:
+    radial-gradient(circle at top left, rgba(196, 95, 45, 0.16), transparent 30%),
+    radial-gradient(circle at right top, rgba(120, 72, 38, 0.12), transparent 28%),
+    linear-gradient(180deg, #fffdf9 0%, var(--rb-bg) 100%);
+  font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: var(--rb-accent-dark);
+}
+
+a:hover {
+  color: var(--rb-accent);
+}
+
+.app-navbar {
+  background: linear-gradient(90deg, #2d1d14 0%, #4d2a17 100%);
+  box-shadow: 0 12px 30px rgba(45, 29, 20, 0.18);
+}
+
+.app-navbar .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link.active {
+  color: #fff;
+}
+
+.page-shell {
+  padding: 3rem 0 1rem;
+}
+
+.page-hero,
+.page-panel {
+  background: rgba(255, 250, 244, 0.82);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--rb-border);
+  border-radius: 1.5rem;
+  box-shadow: 0 16px 40px rgba(36, 27, 22, 0.08);
+}
+
+.page-hero {
+  padding: 3rem;
+}
+
+.page-panel {
+  padding: 1.5rem;
+}
+
+.recipe-card {
+  border: 1px solid var(--rb-border);
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+
+.recipe-card__image,
+.recipe-card__placeholder {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  object-fit: cover;
+  background: linear-gradient(135deg, rgba(196, 95, 45, 0.2), rgba(77, 42, 23, 0.08));
+}
+
+.recipe-card__placeholder {
+  min-height: 100%;
+}
+
+.app-footer {
+  color: var(--rb-muted);
+}
+
+.soft-label {
+  color: var(--rb-muted);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(196, 95, 45, 0.12);
+  color: var(--rb-accent-dark);
+  font-weight: 600;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--rb-accent);
+  --bs-btn-border-color: var(--rb-accent);
+  --bs-btn-hover-bg: var(--rb-accent-dark);
+  --bs-btn-hover-border-color: var(--rb-accent-dark);
+  --bs-btn-active-bg: var(--rb-accent-dark);
+  --bs-btn-active-border-color: var(--rb-accent-dark);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: rgba(196, 95, 45, 0.5);
+  box-shadow: 0 0 0 0.25rem rgba(196, 95, 45, 0.15);
+}
