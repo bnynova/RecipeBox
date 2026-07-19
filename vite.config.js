@@ -6,8 +6,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         home: resolve(__dirname, 'index.html'),
+        login: resolve(__dirname, 'login.html'),
         register: resolve(__dirname, 'pages/register.html'),
-        login: resolve(__dirname, 'pages/login.html'),
         recipeDetails: resolve(__dirname, 'pages/recipe-details.html'),
         recipeForm: resolve(__dirname, 'pages/recipe-form.html'),
         profile: resolve(__dirname, 'pages/profile.html'),
@@ -15,6 +15,29 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    {
+      name: 'pretty-login-route',
+      configureServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          if (req.url === '/login') {
+            req.url = '/login.html';
+          }
+
+          next();
+        });
+      },
+      configurePreviewServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          if (req.url === '/login') {
+            req.url = '/login.html';
+          }
+
+          next();
+        });
+      },
+    },
+  ],
   server: {
     open: '/',
   },

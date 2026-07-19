@@ -1,3 +1,5 @@
+import { escapeHtml } from '../utils/helpers.js';
+
 const NAV_ITEMS = [
   { key: 'home', label: 'Home', href: '/' },
   { key: 'recipe-form', label: 'Add Recipe', href: '/pages/recipe-form.html' },
@@ -5,14 +7,33 @@ const NAV_ITEMS = [
   { key: 'admin', label: 'Admin', href: '/pages/admin.html', requiresRole: 'admin' },
 ];
 
+function getInitials(value) {
+  return value
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('')
+    .slice(0, 2);
+}
+
 /**
  * Create the shared Bootstrap navbar for RecipeBox.
  * @param {object} options
  * @param {string} [options.activePage]
  * @param {boolean} [options.isAuthenticated]
  * @param {string} [options.role]
+ * @param {string} [options.displayName]
+ * @param {string | null} [options.avatarUrl]
  */
-export function createNavbar({ activePage = 'home', isAuthenticated = false, role = 'normal' } = {}) {
+export function createNavbar({
+  activePage = 'home',
+  isAuthenticated = false,
+  role = 'normal',
+  displayName = 'Account',
+  avatarUrl = null,
+} = {}) {
+  const safeDisplayName = escapeHtml(displayName);
   const navLinks = NAV_ITEMS.filter((item) => !item.requiresRole || item.requiresRole === role)
     .map((item) => {
       const activeClass = item.key === activePage ? ' active' : '';
@@ -28,8 +49,18 @@ export function createNavbar({ activePage = 'home', isAuthenticated = false, rol
     .join('');
 
   const authAction = isAuthenticated
-    ? '<button class="btn btn-outline-light ms-lg-3" type="button" data-auth-action="logout">Logout</button>'
-    : '<div class="d-flex flex-column flex-lg-row gap-2 ms-lg-3"><a class="btn btn-outline-light" href="/pages/register.html">Register</a><a class="btn btn-light" href="/pages/login.html">Login</a></div>';
+    ? `
+      <div class="d-flex align-items-center gap-3 ms-lg-3">
+        <div class="d-flex align-items-center gap-2 text-white">
+          <span class="rounded-circle bg-light text-dark d-inline-flex align-items-center justify-content-center fw-semibold" style="width: 2.25rem; height: 2.25rem; overflow: hidden;">
+            ${avatarUrl ? `<img src="${avatarUrl}" alt="${safeDisplayName}" class="w-100 h-100" style="object-fit: cover;" />` : getInitials(displayName)}
+          </span>
+          <span class="fw-semibold small d-none d-lg-inline">${safeDisplayName}</span>
+        </div>
+        <button class="btn btn-outline-light" type="button" data-auth-action="logout">Logout</button>
+      </div>
+    `
+    : '<div class="d-flex flex-column flex-lg-row gap-2 ms-lg-3"><a class="btn btn-outline-light" href="/login#register">Register</a><a class="btn btn-light" href="/login#login">Login</a></div>';
 
   return `
     <nav class="navbar navbar-expand-lg navbar-dark app-navbar">

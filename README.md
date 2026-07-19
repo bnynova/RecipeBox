@@ -41,8 +41,9 @@ The seed script expects a service role key in `.env` because it reads auth users
 ## Pages
 
 - `/`
+- `/login`
 - `/pages/register.html`
-- `/pages/login.html`
+- `/pages/login.html` (redirects to `/login`)
 - `/pages/recipe-details.html`
 - `/pages/recipe-form.html`
 - `/pages/profile.html`

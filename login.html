@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecipeBox | Login</title>
+  </head>
+  <body data-page="login" data-authenticated="false" data-role="normal">
+    <div data-navbar-root></div>
+    <main class="page-shell">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-10 col-xl-9">
+            <section class="page-panel">
+              <div class="row g-4 align-items-stretch">
+                <div class="col-lg-5">
+                  <div class="h-100 rounded-4 p-4 text-white" style="background: linear-gradient(180deg, #4d2a17 0%, #2d1d14 100%);">
+                    <span class="hero-badge bg-light text-dark mb-3">Welcome to RecipeBox</span>
+                    <h1 class="display-6 fw-bold mb-3" data-auth-heading>Create your RecipeBox account</h1>
+                    <p class="text-white-50 mb-4">
+                      Sign in to save your favorites, or register to start sharing recipes with the community.
+                    </p>
+                    <div class="d-grid gap-2">
+                      <button class="btn btn-light" type="button" data-auth-tab="login">Login</button>
+                      <button class="btn btn-outline-light" type="button" data-auth-tab="register">Register</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-7">
+                  <div data-auth-message class="mb-3"></div>
+
+                  <section data-auth-panel="login">
+                    <h2 class="h4 mb-3">Sign in</h2>
+                    <form class="d-grid gap-3">
+                      <div>
+                        <label class="form-label" for="login-email">Email</label>
+                        <input id="login-email" name="email" class="form-control" type="email" placeholder="jane@example.com" autocomplete="email" required />
+                      </div>
+                      <div>
+                        <label class="form-label" for="login-password">Password</label>
+                        <input id="login-password" name="password" class="form-control" type="password" placeholder="Your password" autocomplete="current-password" required />
+                      </div>
+                      <button class="btn btn-primary btn-lg" type="submit">Login</button>
+                    </form>
+                  </section>
+
+                  <section class="d-none" data-auth-panel="register">
+                    <h2 class="h4 mb-3">Register</h2>
+                    <form class="d-grid gap-3">
+                      <div>
+                        <label class="form-label" for="register-name">Name</label>
+                        <input id="register-name" name="displayName" class="form-control" type="text" placeholder="Jane Doe" autocomplete="name" required />
+                      </div>
+                      <div>
+                        <label class="form-label" for="register-email">Email</label>
+                        <input id="register-email" name="email" class="form-control" type="email" placeholder="jane@example.com" autocomplete="email" required />
+                      </div>
+                      <div>
+                        <label class="form-label" for="register-password">Password</label>
+                        <input id="register-password" name="password" class="form-control" type="password" placeholder="Create a password" autocomplete="new-password" required />
+                      </div>
+                      <button class="btn btn-primary btn-lg" type="submit">Create account</button>
+                    </form>
+                  </section>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+    <div data-footer-root></div>
+    <div data-auth-page-root hidden></div>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
