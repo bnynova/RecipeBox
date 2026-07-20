@@ -3,7 +3,7 @@ import { escapeHtml } from '../utils/helpers.js';
 const NAV_ITEMS = [
   { key: 'home', label: 'Home', href: '/' },
   { key: 'dashboard', label: 'Dashboard', href: '/dashboard', requiresAuth: true },
-  { key: 'my-recipes', label: 'My Recipes', href: '/my-recipes', requiresAuth: true },
+  { key: 'my-recipes', label: 'My Recipes', href: '/my-recipes/', requiresAuth: true },
   { key: 'recipe-form', label: 'Add Recipe', href: '/recipe/add', requiresAuth: true },
   { key: 'profile', label: 'Profile', href: '/pages/profile.html' },
   { key: 'admin', label: 'Admin', href: '/pages/admin.html', requiresRole: 'admin' },

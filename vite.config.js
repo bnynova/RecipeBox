@@ -34,7 +34,11 @@ export default defineConfig({
             req.url = '/my-recipes/index.html';
           } else if (req.url === '/recipe/add') {
             req.url = '/recipe-add.html';
+          } else if (req.url === '/recipe/add/') {
+            req.url = '/recipe-add.html';
           } else if (/^\/recipe\/[^/]+\/edit$/.test(req.url ?? '')) {
+            req.url = '/recipe-edit.html';
+          } else if (/^\/recipe\/[^/]+\/edit\/$/.test(req.url ?? '')) {
             req.url = '/recipe-edit.html';
           }
 
@@ -53,7 +57,11 @@ export default defineConfig({
             req.url = '/my-recipes/index.html';
           } else if (req.url === '/recipe/add') {
             req.url = '/recipe-add.html';
+          } else if (req.url === '/recipe/add/') {
+            req.url = '/recipe-add.html';
           } else if (/^\/recipe\/[^/]+\/edit$/.test(req.url ?? '')) {
+            req.url = '/recipe-edit.html';
+          } else if (/^\/recipe\/[^/]+\/edit\/$/.test(req.url ?? '')) {
             req.url = '/recipe-edit.html';
           }
 

@@ -56,13 +56,13 @@ async function handleSubmit(root, event, mode, recipeId) {
     if (mode === 'edit' && recipeId) {
       await updateRecipe(recipeId, payload);
       showToast('Recipe updated.', { variant: 'success' });
-      window.location.assign('/my-recipes');
+      window.location.assign('/my-recipes/');
       return;
     }
 
     await createRecipe(payload);
     showToast('Recipe created.', { variant: 'success' });
-    window.location.assign('/my-recipes');
+    window.location.assign('/my-recipes/');
   } catch (error) {
     showToast(error.message, { variant: 'error' });
   } finally {
