@@ -8,7 +8,7 @@ export default defineConfig({
         home: resolve(__dirname, 'index.html'),
         login: resolve(__dirname, 'login.html'),
         dashboard: resolve(__dirname, 'dashboard.html'),
-        myRecipes: resolve(__dirname, 'my-recipes.html'),
+        myRecipes: resolve(__dirname, 'my-recipes/index.html'),
         recipeAdd: resolve(__dirname, 'recipe-add.html'),
         recipeEdit: resolve(__dirname, 'recipe-edit.html'),
         register: resolve(__dirname, 'pages/register.html'),
@@ -29,7 +29,9 @@ export default defineConfig({
           } else if (req.url === '/dashboard') {
             req.url = '/dashboard.html';
           } else if (req.url === '/my-recipes') {
-            req.url = '/my-recipes.html';
+            req.url = '/my-recipes/';
+          } else if (req.url === '/my-recipes/') {
+            req.url = '/my-recipes/index.html';
           } else if (req.url === '/recipe/add') {
             req.url = '/recipe-add.html';
           } else if (/^\/recipe\/[^/]+\/edit$/.test(req.url ?? '')) {
@@ -46,7 +48,9 @@ export default defineConfig({
           } else if (req.url === '/dashboard') {
             req.url = '/dashboard.html';
           } else if (req.url === '/my-recipes') {
-            req.url = '/my-recipes.html';
+            req.url = '/my-recipes/';
+          } else if (req.url === '/my-recipes/') {
+            req.url = '/my-recipes/index.html';
           } else if (req.url === '/recipe/add') {
             req.url = '/recipe-add.html';
           } else if (/^\/recipe\/[^/]+\/edit$/.test(req.url ?? '')) {
