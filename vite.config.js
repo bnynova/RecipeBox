@@ -29,7 +29,7 @@ export default defineConfig({
           } else if (req.url === '/dashboard') {
             req.url = '/dashboard.html';
           } else if (req.url === '/my-recipes') {
-            req.url = '/my-recipes/';
+            req.url = '/my-recipes/index.html';
           } else if (req.url === '/my-recipes/') {
             req.url = '/my-recipes/index.html';
           } else if (req.url === '/recipe/add') {
@@ -52,7 +52,7 @@ export default defineConfig({
           } else if (req.url === '/dashboard') {
             req.url = '/dashboard.html';
           } else if (req.url === '/my-recipes') {
-            req.url = '/my-recipes/';
+            req.url = '/my-recipes/index.html';
           } else if (req.url === '/my-recipes/') {
             req.url = '/my-recipes/index.html';
           } else if (req.url === '/recipe/add') {
