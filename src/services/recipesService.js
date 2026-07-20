@@ -26,6 +26,40 @@ function normalizeRecipe(recipe) {
   };
 }
 
+function computeCommentStats(comments = []) {
+  const count = comments.length;
+
+  if (count === 0) {
+    return { commentCount: 0, avgRating: null };
+  }
+
+  const sum = comments.reduce((total, comment) => total + Number(comment.rating ?? 0), 0);
+
+  return {
+    commentCount: count,
+    avgRating: sum / count,
+  };
+}
+
+function attachCommentStats(recipes, comments) {
+  const commentsByRecipeId = new Map();
+
+  comments.forEach((comment) => {
+    const existing = commentsByRecipeId.get(comment.recipe_id) ?? [];
+    existing.push(comment);
+    commentsByRecipeId.set(comment.recipe_id, existing);
+  });
+
+  return recipes.map((recipe) => {
+    const stats = computeCommentStats(commentsByRecipeId.get(recipe.id) ?? []);
+
+    return {
+      ...recipe,
+      ...stats,
+    };
+  });
+}
+
 /**
  * Fetch the categories list for filters and recipe forms.
  */
@@ -70,6 +104,50 @@ export async function listDashboardRecipes() {
 }
 
 /**
+ * Fetch recipes owned by the current user along with comment counts and average ratings.
+ * @param {string} ownerId
+ */
+export async function listMyRecipes(ownerId) {
+  const supabase = getSupabaseClient();
+
+  const { data: recipes, error: recipesError } = await supabase
+    .from('recipes')
+    .select(`
+      id,
+      title,
+      description,
+      ingredients,
+      steps,
+      image_url,
+      category_id,
+      category:categories(id, name),
+      author:profiles!recipes_owner_profile_fkey(id, email, avatar_url)
+    `)
+    .eq('owner_id', ownerId)
+    .order('created_at', { ascending: false });
+
+  if (recipesError) {
+    throw new Error(getRecipeErrorMessage(recipesError));
+  }
+
+  if (!recipes.length) {
+    return [];
+  }
+
+  const recipeIds = recipes.map((recipe) => recipe.id);
+  const { data: comments, error: commentsError } = await supabase
+    .from('comments')
+    .select('recipe_id, rating')
+    .in('recipe_id', recipeIds);
+
+  if (commentsError) {
+    throw new Error(getRecipeErrorMessage(commentsError));
+  }
+
+  return attachCommentStats(recipes.map(normalizeRecipe), comments);
+}
+
+/**
  * List published recipes for the home page and browse views.
  */
 export async function listRecipes() {
@@ -111,7 +189,32 @@ export async function getRecipeById(recipeId) {
  * @param {object} recipeData
  */
 export async function createRecipe(recipeData) {
-  throw new Error('createRecipe is not implemented yet.');
+  const supabase = getSupabaseClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+
+  if (userError) {
+    throw new Error(getRecipeErrorMessage(userError));
+  }
+
+  const { data, error } = await supabase
+    .from('recipes')
+    .insert({
+      title: recipeData.title,
+      description: recipeData.description,
+      ingredients: recipeData.ingredients,
+      steps: recipeData.steps,
+      image_url: recipeData.imageUrl,
+      category_id: recipeData.categoryId,
+      owner_id: userData.user.id,
+    })
+    .select('id')
+    .single();
+
+  if (error) {
+    throw new Error(getRecipeErrorMessage(error));
+  }
+
+  return data;
 }
 
 /**
@@ -120,7 +223,28 @@ export async function createRecipe(recipeData) {
  * @param {object} recipeData
  */
 export async function updateRecipe(recipeId, recipeData) {
-  throw new Error('updateRecipe is not implemented yet.');
+  const supabase = getSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('recipes')
+    .update({
+      title: recipeData.title,
+      description: recipeData.description,
+      ingredients: recipeData.ingredients,
+      steps: recipeData.steps,
+      image_url: recipeData.imageUrl,
+      category_id: recipeData.categoryId,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', recipeId)
+    .select('id')
+    .single();
+
+  if (error) {
+    throw new Error(getRecipeErrorMessage(error));
+  }
+
+  return data;
 }
 
 /**
@@ -128,7 +252,13 @@ export async function updateRecipe(recipeId, recipeData) {
  * @param {string} recipeId
  */
 export async function deleteRecipe(recipeId) {
-  throw new Error('deleteRecipe is not implemented yet.');
+  const supabase = getSupabaseClient();
+
+  const { error } = await supabase.from('recipes').delete().eq('id', recipeId);
+
+  if (error) {
+    throw new Error(getRecipeErrorMessage(error));
+  }
 }
 
 /**

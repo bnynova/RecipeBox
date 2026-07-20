@@ -214,3 +214,37 @@ a:hover {
 .toast .toast-body {
   padding: 0.9rem 1rem;
 }
+
+.my-recipes__table {
+  table-layout: fixed;
+}
+
+.my-recipes__table th:nth-child(1) {
+  width: 18%;
+}
+
+.my-recipes__table th:nth-child(2) {
+  width: 12%;
+}
+
+.my-recipes__table th:nth-child(3) {
+  width: 34%;
+}
+
+.my-recipes__table th:nth-child(4) {
+  width: 9%;
+}
+
+.my-recipes__table th:nth-child(5) {
+  width: 9%;
+}
+
+.my-recipes__table th:nth-child(6) {
+  width: 18%;
+}
+
+.my-recipes__description {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

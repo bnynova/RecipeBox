@@ -2,7 +2,9 @@ import { escapeHtml } from '../utils/helpers.js';
 
 const NAV_ITEMS = [
   { key: 'home', label: 'Home', href: '/' },
-  { key: 'recipe-form', label: 'Add Recipe', href: '/pages/recipe-form.html' },
+  { key: 'dashboard', label: 'Dashboard', href: '/dashboard', requiresAuth: true },
+  { key: 'my-recipes', label: 'My Recipes', href: '/my-recipes', requiresAuth: true },
+  { key: 'recipe-form', label: 'Add Recipe', href: '/recipe/add', requiresAuth: true },
   { key: 'profile', label: 'Profile', href: '/pages/profile.html' },
   { key: 'admin', label: 'Admin', href: '/pages/admin.html', requiresRole: 'admin' },
 ];
@@ -40,10 +42,14 @@ export function createNavbar({
   avatarUrl = null,
 } = {}) {
   const safeDisplayName = escapeHtml(displayName);
-  const navLinks = [getHomeNavigationItem(isAuthenticated), ...NAV_ITEMS.slice(1)]
-    .filter((item) => !item.requiresRole || item.requiresRole === role)
+  const navLinks = [getHomeNavigationItem(isAuthenticated), ...NAV_ITEMS.filter((item) => item.key !== 'home' && item.key !== 'dashboard')]
+    .filter((item) => (!item.requiresAuth || isAuthenticated) && (!item.requiresRole || item.requiresRole === role))
     .map((item) => {
-      const activeClass = item.key === activePage ? ' active' : '';
+      const activeClass =
+        item.key === activePage ||
+        (item.key === 'recipe-form' && ['recipe-add', 'recipe-edit', 'recipe-form'].includes(activePage))
+          ? ' active'
+          : '';
 
       return `
         <li class="nav-item">

@@ -3,47 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="refresh" content="0; url=/recipe/add" />
     <title>RecipeBox | Add Recipe</title>
   </head>
-  <body data-page="recipe-form" data-authenticated="false" data-role="normal">
-    <div data-navbar-root></div>
-    <main class="page-shell">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-8">
-            <section class="page-panel">
-              <p class="soft-label mb-2">Add recipe</p>
-              <h1 class="h3 mb-4">Create a new recipe</h1>
-              <form class="d-grid gap-3">
-                <div>
-                  <label class="form-label" for="recipe-title">Title</label>
-                  <input id="recipe-title" class="form-control" type="text" placeholder="Lemon Herb Chicken" />
-                </div>
-                <div>
-                  <label class="form-label" for="recipe-category">Category</label>
-                  <select id="recipe-category" class="form-select">
-                    <option selected>Select a category</option>
-                    <option>Dinner</option>
-                    <option>Lunch</option>
-                    <option>Dessert</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="form-label" for="recipe-ingredients">Ingredients</label>
-                  <textarea id="recipe-ingredients" class="form-control" rows="5" placeholder="List ingredients..."></textarea>
-                </div>
-                <div>
-                  <label class="form-label" for="recipe-steps">Steps</label>
-                  <textarea id="recipe-steps" class="form-control" rows="7" placeholder="Write the preparation steps..."></textarea>
-                </div>
-                <button class="btn btn-primary" type="submit">Save recipe</button>
-              </form>
-            </section>
-          </div>
-        </div>
-      </div>
-    </main>
-    <div data-footer-root></div>
-    <script type="module" src="../src/main.js"></script>
+  <body>
+    <p><a href="/recipe/add">Go to add recipe</a></p>
   </body>
 </html>

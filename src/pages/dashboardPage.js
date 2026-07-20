@@ -91,7 +91,7 @@ export async function setupDashboardPage(root) {
 
   addRecipeButtons.forEach((button) => {
     button.addEventListener('click', () => {
-      window.location.assign('/pages/recipe-form.html');
+      window.location.assign('/recipe/add');
     });
   });
 

@@ -8,6 +8,9 @@ export default defineConfig({
         home: resolve(__dirname, 'index.html'),
         login: resolve(__dirname, 'login.html'),
         dashboard: resolve(__dirname, 'dashboard.html'),
+        myRecipes: resolve(__dirname, 'my-recipes.html'),
+        recipeAdd: resolve(__dirname, 'recipe-add.html'),
+        recipeEdit: resolve(__dirname, 'recipe-edit.html'),
         register: resolve(__dirname, 'pages/register.html'),
         recipeDetails: resolve(__dirname, 'pages/recipe-details.html'),
         recipeForm: resolve(__dirname, 'pages/recipe-form.html'),
@@ -25,6 +28,12 @@ export default defineConfig({
             req.url = '/login.html';
           } else if (req.url === '/dashboard') {
             req.url = '/dashboard.html';
+          } else if (req.url === '/my-recipes') {
+            req.url = '/my-recipes.html';
+          } else if (req.url === '/recipe/add') {
+            req.url = '/recipe-add.html';
+          } else if (/^\/recipe\/[^/]+\/edit$/.test(req.url ?? '')) {
+            req.url = '/recipe-edit.html';
           }
 
           next();
@@ -36,6 +45,12 @@ export default defineConfig({
             req.url = '/login.html';
           } else if (req.url === '/dashboard') {
             req.url = '/dashboard.html';
+          } else if (req.url === '/my-recipes') {
+            req.url = '/my-recipes.html';
+          } else if (req.url === '/recipe/add') {
+            req.url = '/recipe-add.html';
+          } else if (/^\/recipe\/[^/]+\/edit$/.test(req.url ?? '')) {
+            req.url = '/recipe-edit.html';
           }
 
           next();

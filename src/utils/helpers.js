@@ -40,3 +40,18 @@ export function formatDate(value) {
     timeStyle: 'short',
   }).format(new Date(value));
 }
+
+/**
+ * Truncate long text for table and card previews.
+ * @param {string} value
+ * @param {number} [maxLength=120]
+ */
+export function truncateText(value, maxLength = 120) {
+  const text = String(value ?? '').trim();
+
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  return `${text.slice(0, Math.max(0, maxLength - 1)).trimEnd()}…`;
+}

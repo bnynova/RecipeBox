@@ -6,6 +6,8 @@ import { createNavbar } from './components/navbar.js';
 import { showToast } from './components/toasts.js';
 import { setupDashboardPage } from './pages/dashboardPage.js';
 import { setupAuthPage } from './pages/authPage.js';
+import { setupMyRecipesPage } from './pages/myRecipesPage.js';
+import { setupRecipeFormPage } from './pages/recipeFormPage.js';
 import {
   getCurrentSession,
   getCurrentUser,
@@ -82,7 +84,7 @@ async function bootstrap() {
   const session = await getCurrentSession().catch(() => null);
   const isAuthenticated = Boolean(session?.user);
 
-  if (activePage === 'dashboard' && !isAuthenticated) {
+  if ((activePage === 'dashboard' || activePage === 'my-recipes' || activePage === 'recipe-add' || activePage === 'recipe-edit') && !isAuthenticated) {
     window.location.assign('/login');
     return;
   }
@@ -98,6 +100,14 @@ async function bootstrap() {
 
   if (activePage === 'dashboard') {
     void setupDashboardPage(document);
+  }
+
+  if (activePage === 'my-recipes') {
+    void setupMyRecipesPage(document);
+  }
+
+  if (activePage === 'recipe-add' || activePage === 'recipe-edit') {
+    void setupRecipeFormPage(document);
   }
 
   await renderNavbarFromSession();

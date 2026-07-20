@@ -57,7 +57,7 @@ async function handleLogin(root, event) {
     submitButton.disabled = true;
     submitButton.textContent = 'Signing in...';
     await loginUser({ email, password });
-    window.location.assign('/');
+    window.location.assign('/dashboard');
   } catch (error) {
     showToast(error.message, { variant: 'error' });
   } finally {
