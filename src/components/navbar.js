@@ -17,6 +17,12 @@ function getInitials(value) {
     .slice(0, 2);
 }
 
+function getHomeNavigationItem(isAuthenticated) {
+  return isAuthenticated
+    ? { key: 'dashboard', label: 'Dashboard', href: '/dashboard' }
+    : { key: 'home', label: 'Home', href: '/' };
+}
+
 /**
  * Create the shared Bootstrap navbar for RecipeBox.
  * @param {object} options
@@ -34,7 +40,8 @@ export function createNavbar({
   avatarUrl = null,
 } = {}) {
   const safeDisplayName = escapeHtml(displayName);
-  const navLinks = NAV_ITEMS.filter((item) => !item.requiresRole || item.requiresRole === role)
+  const navLinks = [getHomeNavigationItem(isAuthenticated), ...NAV_ITEMS.slice(1)]
+    .filter((item) => !item.requiresRole || item.requiresRole === role)
     .map((item) => {
       const activeClass = item.key === activePage ? ' active' : '';
 
@@ -62,10 +69,12 @@ export function createNavbar({
     `
     : '<div class="d-flex flex-column flex-lg-row gap-2 ms-lg-3"><a class="btn btn-outline-light" href="/login#register">Register</a><a class="btn btn-light" href="/login#login">Login</a></div>';
 
+  const brandHref = isAuthenticated ? '/dashboard' : '/';
+
   return `
     <nav class="navbar navbar-expand-lg navbar-dark app-navbar">
       <div class="container">
-        <a class="navbar-brand fw-bold text-uppercase" href="/">RecipeBox</a>
+        <a class="navbar-brand fw-bold text-uppercase" href="${brandHref}">RecipeBox</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#recipeBoxNav" aria-controls="recipeBoxNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>

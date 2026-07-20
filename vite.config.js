@@ -7,6 +7,7 @@ export default defineConfig({
       input: {
         home: resolve(__dirname, 'index.html'),
         login: resolve(__dirname, 'login.html'),
+        dashboard: resolve(__dirname, 'dashboard.html'),
         register: resolve(__dirname, 'pages/register.html'),
         recipeDetails: resolve(__dirname, 'pages/recipe-details.html'),
         recipeForm: resolve(__dirname, 'pages/recipe-form.html'),
@@ -22,6 +23,8 @@ export default defineConfig({
         server.middlewares.use((req, _res, next) => {
           if (req.url === '/login') {
             req.url = '/login.html';
+          } else if (req.url === '/dashboard') {
+            req.url = '/dashboard.html';
           }
 
           next();
@@ -31,6 +34,8 @@ export default defineConfig({
         server.middlewares.use((req, _res, next) => {
           if (req.url === '/login') {
             req.url = '/login.html';
+          } else if (req.url === '/dashboard') {
+            req.url = '/dashboard.html';
           }
 
           next();

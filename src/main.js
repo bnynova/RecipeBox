@@ -4,6 +4,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { createFooter } from './components/footer.js';
 import { createNavbar } from './components/navbar.js';
 import { showToast } from './components/toasts.js';
+import { setupDashboardPage } from './pages/dashboardPage.js';
 import { setupAuthPage } from './pages/authPage.js';
 import {
   getCurrentSession,
@@ -12,7 +13,6 @@ import {
   logoutUser,
   subscribeToAuthChanges,
 } from './services/authService.js';
-import { readBooleanDataAttribute } from './utils/helpers.js';
 import './styles/main.css';
 
 const { body } = document;
@@ -75,26 +75,32 @@ async function handleNavbarActions() {
 }
 
 async function bootstrap() {
-  const isAuthenticated = readBooleanDataAttribute(body, 'authenticated', false);
   if (footerRoot) {
     footerRoot.innerHTML = createFooter();
   }
 
+  const session = await getCurrentSession().catch(() => null);
+  const isAuthenticated = Boolean(session?.user);
+
+  if (activePage === 'dashboard' && !isAuthenticated) {
+    window.location.assign('/login');
+    return;
+  }
+
+  if ((activePage === 'home' || activePage === 'login') && isAuthenticated) {
+    window.location.assign('/dashboard');
+    return;
+  }
+
   if (activePage === 'login') {
     setupAuthPage(document);
-
-    const session = await getCurrentSession().catch(() => null);
-    if (session?.user) {
-      window.location.assign('/');
-      return;
-    }
   }
 
-  if (isAuthenticated) {
-    await renderNavbarFromSession();
-  } else {
-    await renderNavbarFromSession();
+  if (activePage === 'dashboard') {
+    void setupDashboardPage(document);
   }
+
+  await renderNavbarFromSession();
 
   await handleNavbarActions();
 
