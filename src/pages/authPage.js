@@ -1,19 +1,5 @@
 import { loginUser, registerUser } from '../services/authService.js';
-import { escapeHtml } from '../utils/helpers.js';
-
-function renderAuthMessage(root, message, variant = 'danger') {
-  const messageRoot = root.querySelector('[data-auth-message]');
-  if (!messageRoot) {
-    return;
-  }
-
-  if (!message) {
-    messageRoot.innerHTML = '';
-    return;
-  }
-
-  messageRoot.innerHTML = `<div class="alert alert-${variant} mb-0" role="alert">${escapeHtml(message)}</div>`;
-}
+import { showToast } from '../components/toasts.js';
 
 function setActiveMode(root, mode) {
   const loginTab = root.querySelector('[data-auth-tab="login"]');
@@ -36,7 +22,6 @@ function setActiveMode(root, mode) {
 
 async function handleRegister(root, event) {
   event.preventDefault();
-  renderAuthMessage(root, '');
 
   const form = event.currentTarget;
   const submitButton = form.querySelector('button[type="submit"]');
@@ -48,12 +33,12 @@ async function handleRegister(root, event) {
     submitButton.disabled = true;
     submitButton.textContent = 'Creating account...';
     await registerUser({ displayName, email, password });
-    renderAuthMessage(root, 'Account created. You can sign in now.', 'success');
+    showToast('Account created. Your profile is ready.', { variant: 'success' });
     setActiveMode(root, 'login');
     form.reset();
     root.querySelector('[data-auth-panel="login"] [name="email"]')?.focus();
   } catch (error) {
-    renderAuthMessage(root, error.message);
+    showToast(error.message, { variant: 'error' });
   } finally {
     submitButton.disabled = false;
     submitButton.textContent = 'Create account';
@@ -62,7 +47,6 @@ async function handleRegister(root, event) {
 
 async function handleLogin(root, event) {
   event.preventDefault();
-  renderAuthMessage(root, '');
 
   const form = event.currentTarget;
   const submitButton = form.querySelector('button[type="submit"]');
@@ -75,7 +59,7 @@ async function handleLogin(root, event) {
     await loginUser({ email, password });
     window.location.assign('/');
   } catch (error) {
-    renderAuthMessage(root, error.message);
+    showToast(error.message, { variant: 'error' });
   } finally {
     submitButton.disabled = false;
     submitButton.textContent = 'Login';
@@ -97,13 +81,11 @@ export function setupAuthPage(root) {
   root.querySelector('[data-auth-tab="login"]')?.addEventListener('click', () => {
     window.location.hash = 'login';
     setActiveMode(root, 'login');
-    renderAuthMessage(root, '');
   });
 
   root.querySelector('[data-auth-tab="register"]')?.addEventListener('click', () => {
     window.location.hash = 'register';
     setActiveMode(root, 'register');
-    renderAuthMessage(root, '');
   });
 
   root.querySelector('[data-auth-panel="login"] form')?.addEventListener('submit', (event) => {

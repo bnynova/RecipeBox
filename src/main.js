@@ -3,6 +3,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import { createFooter } from './components/footer.js';
 import { createNavbar } from './components/navbar.js';
+import { showToast } from './components/toasts.js';
 import { setupAuthPage } from './pages/authPage.js';
 import {
   getCurrentSession,
@@ -65,9 +66,10 @@ async function handleNavbarActions() {
 
     try {
       await logoutUser();
+      showToast('You have been logged out.', { variant: 'info' });
       window.location.assign('/');
     } catch (error) {
-      window.alert(error.message);
+      showToast(error.message, { variant: 'error' });
     }
   });
 }

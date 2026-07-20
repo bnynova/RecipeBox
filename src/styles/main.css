@@ -201,3 +201,16 @@ a:hover {
 .app-footer {
   padding-bottom: 2rem;
 }
+
+.app-toast-stack {
+  z-index: 1080;
+}
+
+.toast {
+  min-width: 18rem;
+  border-radius: 1rem;
+}
+
+.toast .toast-body {
+  padding: 0.9rem 1rem;
+}
