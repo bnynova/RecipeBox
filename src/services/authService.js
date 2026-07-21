@@ -115,7 +115,7 @@ export async function getProfileById(userId) {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, email, role, avatar_url')
+    .select('id, email, role, display_name, bio, avatar_url')
     .eq('id', userId)
     .single();
 

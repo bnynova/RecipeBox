@@ -1,12 +1,17 @@
 import { escapeHtml } from '../utils/helpers.js';
 
-const NAV_ITEMS = [
+const GUEST_NAV_ITEMS = [
   { key: 'home', label: 'Home', href: '/' },
-  { key: 'dashboard', label: 'Dashboard', href: '/dashboard', requiresAuth: true },
+  { key: 'recipes', label: 'Recipes', href: '/recipes' },
+  { key: 'contacts', label: 'Contacts', href: '/contacts' },
+];
+
+const AUTH_NAV_ITEMS = [
+  { key: 'home', label: 'Home', href: '/dashboard', requiresAuth: true },
+  { key: 'recipes', label: 'Recipes', href: '/recipes', requiresAuth: true },
+  { key: 'contacts', label: 'Contacts', href: '/contacts', requiresAuth: true },
   { key: 'my-recipes', label: 'My Recipes', href: '/my-recipes/index.html', requiresAuth: true },
-  { key: 'recipe-form', label: 'Add Recipe', href: '/recipe/add', requiresAuth: true },
-  { key: 'profile', label: 'Profile', href: '/pages/profile.html' },
-  { key: 'admin', label: 'Admin', href: '/pages/admin.html', requiresRole: 'admin' },
+  { key: 'profile', label: 'Profile', href: '/profile', requiresAuth: true },
 ];
 
 function getInitials(value) {
@@ -19,10 +24,20 @@ function getInitials(value) {
     .slice(0, 2);
 }
 
-function getHomeNavigationItem(isAuthenticated) {
-  return isAuthenticated
-    ? { key: 'dashboard', label: 'Dashboard', href: '/dashboard' }
-    : { key: 'home', label: 'Home', href: '/' };
+function getNavItems(isAuthenticated) {
+  return isAuthenticated ? AUTH_NAV_ITEMS : GUEST_NAV_ITEMS;
+}
+
+function isActiveNavItem(item, activePage) {
+  if (item.key === activePage) {
+    return true;
+  }
+
+  if (item.key === 'home' && activePage === 'dashboard') {
+    return true;
+  }
+
+  return item.key === 'recipe-form' && ['recipe-add', 'recipe-edit', 'recipe-form'].includes(activePage);
 }
 
 /**
@@ -41,15 +56,19 @@ export function createNavbar({
   displayName = 'Account',
   avatarUrl = null,
 } = {}) {
-  const safeDisplayName = escapeHtml(displayName);
-  const navLinks = [getHomeNavigationItem(isAuthenticated), ...NAV_ITEMS.filter((item) => item.key !== 'home' && item.key !== 'dashboard')]
+  const navItems = getNavItems(isAuthenticated)
     .filter((item) => (!item.requiresAuth || isAuthenticated) && (!item.requiresRole || item.requiresRole === role))
+    .filter((item) => isAuthenticated || ['home', 'recipes', 'contacts'].includes(item.key))
+    .filter((item) => !isAuthenticated || ['home', 'recipes', 'contacts', 'my-recipes', 'profile'].includes(item.key));
+
+  const leftNavItems = navItems.filter((item) => ['home', 'recipes', 'contacts'].includes(item.key));
+  const rightNavItems = navItems.filter((item) => ['my-recipes', 'profile'].includes(item.key));
+
+  const safeDisplayName = escapeHtml(displayName);
+
+  const renderNavList = (items) => items
     .map((item) => {
-      const activeClass =
-        item.key === activePage ||
-        (item.key === 'recipe-form' && ['recipe-add', 'recipe-edit', 'recipe-form'].includes(activePage))
-          ? ' active'
-          : '';
+      const activeClass = isActiveNavItem(item, activePage) ? ' active' : '';
 
       return `
         <li class="nav-item">
@@ -70,6 +89,7 @@ export function createNavbar({
           </span>
           <span class="fw-semibold small d-none d-lg-inline">${safeDisplayName}</span>
         </div>
+        <ul class="navbar-nav flex-row flex-wrap gap-lg-2 mb-2 mb-lg-0">${renderNavList(rightNavItems)}</ul>
         <button class="btn btn-outline-light" type="button" data-auth-action="logout">Logout</button>
       </div>
     `
@@ -85,7 +105,7 @@ export function createNavbar({
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="recipeBoxNav">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">${navLinks}</ul>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">${renderNavList(leftNavItems)}</ul>
           <div class="d-flex align-items-lg-center">${authAction}</div>
         </div>
       </div>

@@ -6,15 +6,16 @@ export default defineConfig({
     rollupOptions: {
       input: {
         home: resolve(__dirname, 'index.html'),
+          recipes: resolve(__dirname, 'recipes.html'),
+          contacts: resolve(__dirname, 'contacts.html'),
+          profile: resolve(__dirname, 'profile.html'),
         login: resolve(__dirname, 'login.html'),
         dashboard: resolve(__dirname, 'dashboard.html'),
         myRecipes: resolve(__dirname, 'my-recipes/index.html'),
         recipeAdd: resolve(__dirname, 'recipe-add.html'),
         recipeEdit: resolve(__dirname, 'recipe-edit.html'),
-        register: resolve(__dirname, 'pages/register.html'),
         recipeDetails: resolve(__dirname, 'pages/recipe-details.html'),
         recipeForm: resolve(__dirname, 'pages/recipe-form.html'),
-        profile: resolve(__dirname, 'pages/profile.html'),
         admin: resolve(__dirname, 'pages/admin.html'),
       },
     },
@@ -28,6 +29,12 @@ export default defineConfig({
             req.url = '/login.html';
           } else if (req.url === '/dashboard') {
             req.url = '/dashboard.html';
+          } else if (req.url === '/recipes') {
+            req.url = '/recipes.html';
+          } else if (req.url === '/contacts') {
+            req.url = '/contacts.html';
+          } else if (req.url === '/profile') {
+            req.url = '/profile.html';
           } else if (req.url === '/my-recipes') {
             req.url = '/my-recipes/index.html';
           } else if (req.url === '/my-recipes/') {
@@ -53,6 +60,12 @@ export default defineConfig({
             req.url = '/login.html';
           } else if (req.url === '/dashboard') {
             req.url = '/dashboard.html';
+          } else if (req.url === '/recipes') {
+            req.url = '/recipes.html';
+          } else if (req.url === '/contacts') {
+            req.url = '/contacts.html';
+          } else if (req.url === '/profile') {
+            req.url = '/profile.html';
           } else if (req.url === '/my-recipes') {
             req.url = '/my-recipes/index.html';
           } else if (req.url === '/my-recipes/') {

@@ -4,8 +4,11 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { createFooter } from './components/footer.js';
 import { createNavbar } from './components/navbar.js';
 import { showToast } from './components/toasts.js';
+import { setupHomePage } from './pages/homePage.js';
+import { setupRecipesPage } from './pages/recipesPage.js';
 import { setupDashboardPage } from './pages/dashboardPage.js';
 import { setupAuthPage } from './pages/authPage.js';
+import { setupProfilePage } from './pages/profilePage.js';
 import { setupRecipeDetailsPage } from './pages/recipeDetailsPage.js';
 import { setupMyRecipesPage } from './pages/myRecipesPage.js';
 import { setupRecipeFormPage } from './pages/recipeFormPage.js';
@@ -24,7 +27,7 @@ const navbarRoot = document.querySelector('[data-navbar-root]');
 const footerRoot = document.querySelector('[data-footer-root]');
 
 function getDisplayNameFromProfile(user, profile) {
-  return user?.user_metadata?.full_name || profile?.email || user?.email || 'Account';
+  return profile?.display_name || user?.user_metadata?.full_name || profile?.email || user?.email || 'Account';
 }
 
 async function renderNavbarFromSession() {
@@ -85,7 +88,7 @@ async function bootstrap() {
   const session = await getCurrentSession().catch(() => null);
   const isAuthenticated = Boolean(session?.user);
 
-  if ((activePage === 'dashboard' || activePage === 'my-recipes' || activePage === 'recipe-add' || activePage === 'recipe-edit') && !isAuthenticated) {
+  if ((activePage === 'dashboard' || activePage === 'my-recipes' || activePage === 'recipe-add' || activePage === 'recipe-edit' || activePage === 'profile') && !isAuthenticated) {
     window.location.assign('/login');
     return;
   }
@@ -99,12 +102,28 @@ async function bootstrap() {
     setupAuthPage(document);
   }
 
+  if (activePage === 'home') {
+    void setupHomePage(document);
+  }
+
+  if (activePage === 'recipes') {
+    void setupRecipesPage(document);
+  }
+
   if (activePage === 'dashboard') {
     void setupDashboardPage(document);
   }
 
+  if (activePage === 'contacts') {
+    // Static page; navbar/footer are enough.
+  }
+
   if (activePage === 'recipe-details') {
     void setupRecipeDetailsPage(document);
+  }
+
+  if (activePage === 'profile') {
+    void setupProfilePage(document);
   }
 
   if (activePage === 'my-recipes') {
@@ -120,6 +139,10 @@ async function bootstrap() {
   await handleNavbarActions();
 
   subscribeToAuthChanges(() => {
+    void renderNavbarFromSession();
+  });
+
+  document.addEventListener('profile:updated', () => {
     void renderNavbarFromSession();
   });
 }
