@@ -65,7 +65,7 @@ function renderTable(root, recipes) {
             <div class="d-flex flex-wrap gap-2">
               <a class="btn btn-outline-secondary btn-sm" href="/pages/recipe-details.html?id=${recipe.id}">View Recipe</a>
               <a class="btn btn-outline-primary btn-sm" href="/recipe/${recipe.id}/edit">Edit</a>
-              <button class="btn btn-outline-danger btn-sm" type="button" data-delete-recipe-id="${recipe.id}" data-delete-recipe-title="${escapeHtml(recipe.title)}">Delete</button>
+              <button class="btn btn-outline-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteRecipeModal" data-delete-recipe-id="${recipe.id}" data-delete-recipe-title="${escapeHtml(recipe.title)}" data-delete-recipe-image-url="${escapeHtml(recipe.imageUrl ?? '')}">Delete</button>
             </div>
           </td>
         </tr>
@@ -79,15 +79,13 @@ function renderTable(root, recipes) {
 }
 
 function openDeleteModal(root, recipeId, recipeTitle) {
-  const modalElement = root.querySelector('[data-delete-modal]');
+  const modalElement = root.querySelector('#deleteRecipeModal');
   if (!modalElement) {
     return;
   }
 
   modalElement.dataset.recipeId = recipeId;
   modalElement.querySelector('[data-delete-modal-title]')?.replaceChildren(document.createTextNode(recipeTitle));
-  const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-  modal.show();
 }
 
 /**
@@ -101,7 +99,7 @@ export async function setupMyRecipesPage(root) {
     return;
   }
 
-  const deleteModalElement = root.querySelector('[data-delete-modal]');
+  const deleteModalElement = root.querySelector('#deleteRecipeModal');
   const confirmDeleteButton = root.querySelector('[data-confirm-delete]');
 
   let loadedRecipes = [];
