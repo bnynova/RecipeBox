@@ -2,6 +2,25 @@ import { showToast } from '../components/toasts.js';
 import { deleteRecipe, listMyRecipes } from '../services/recipesService.js';
 import { escapeHtml, truncateText } from '../utils/helpers.js';
 import { getCurrentUser } from '../services/authService.js';
+import { deleteRecipeImageByUrl } from '../services/storageService.js';
+
+const FLASH_TOAST_KEY = 'recipebox:flash-toast';
+
+function takeFlashToast() {
+  const rawValue = sessionStorage.getItem(FLASH_TOAST_KEY);
+
+  if (!rawValue) {
+    return null;
+  }
+
+  sessionStorage.removeItem(FLASH_TOAST_KEY);
+
+  try {
+    return JSON.parse(rawValue);
+  } catch {
+    return null;
+  }
+}
 
 function formatAverageRating(value) {
   if (value === null || value === undefined) {
@@ -87,6 +106,11 @@ export async function setupMyRecipesPage(root) {
 
   let loadedRecipes = [];
 
+  const flashToast = takeFlashToast();
+  if (flashToast?.message) {
+    showToast(flashToast.message, { variant: flashToast.variant ?? 'success' });
+  }
+
   root.querySelector('[data-add-recipe-button]')?.addEventListener('click', () => {
     window.location.assign('/recipe/add');
   });
@@ -109,7 +133,10 @@ export async function setupMyRecipesPage(root) {
       return;
     }
 
+    const recipe = loadedRecipes.find((item) => String(item.id) === String(recipeId));
+
     try {
+      await deleteRecipeImageByUrl(recipe?.imageUrl ?? null);
       await deleteRecipe(recipeId);
       showToast('Recipe deleted.', { variant: 'success' });
       loadedRecipes = loadedRecipes.filter((recipe) => String(recipe.id) !== String(recipeId));
