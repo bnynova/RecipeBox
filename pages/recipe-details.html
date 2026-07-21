@@ -9,18 +9,23 @@
     <div data-navbar-root></div>
     <main class="page-shell">
       <div class="container">
-        <section class="page-panel mb-4">
-          <div class="row g-4 align-items-center">
-            <div class="col-lg-6">
-              <div data-recipe-image-slot class="recipe-details__image-wrap rounded-4 overflow-hidden">
+        <section class="page-panel mb-4" data-recipe-details-shell>
+          <div class="row g-4 align-items-stretch">
+            <div class="col-lg-5">
+              <div data-recipe-image-slot class="recipe-details__image-wrap rounded-4 overflow-hidden h-100">
                 <div class="recipe-card__placeholder recipe-details__placeholder rounded-4 d-none" data-recipe-image-placeholder></div>
                 <img data-recipe-image class="recipe-details__image d-none" alt="Recipe image" />
               </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-7 d-flex align-items-center">
+              <div>
               <p class="soft-label mb-2">Recipe details</p>
               <h1 class="h2" data-recipe-title>Loading recipe...</h1>
               <p class="text-secondary" data-recipe-description>Fetching recipe details from Supabase.</p>
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="badge text-bg-light border text-uppercase fw-semibold" data-recipe-category-badge>Category</span>
+                <span class="badge text-bg-light border text-uppercase fw-semibold" data-recipe-author-badge>Author</span>
+              </div>
               <dl class="row mb-0">
                 <dt class="col-sm-4">Category</dt>
                 <dd class="col-sm-8" data-recipe-category>—</dd>
@@ -29,6 +34,7 @@
                 <dt class="col-sm-4">Recipe ID</dt>
                 <dd class="col-sm-8" data-recipe-id>—</dd>
               </dl>
+              </div>
             </div>
           </div>
         </section>
@@ -37,11 +43,13 @@
           <div class="row g-4">
             <div class="col-lg-5">
               <h2 class="h4">Ingredients</h2>
-              <ul class="list-unstyled mb-0" data-recipe-ingredients></ul>
+              <p class="text-secondary mb-3">Everything you need, grouped for easy shopping and prep.</p>
+              <ul class="list-unstyled mb-0 recipe-details__ingredients" data-recipe-ingredients></ul>
             </div>
             <div class="col-lg-7">
               <h2 class="h4">Steps</h2>
-              <div class="d-grid gap-3" data-recipe-steps></div>
+              <p class="text-secondary mb-3">Follow the steps in order. Each one is split into its own card for faster scanning.</p>
+              <div class="d-grid gap-3 recipe-details__steps" data-recipe-steps></div>
             </div>
           </div>
         </section>

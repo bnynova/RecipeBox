@@ -8,9 +8,14 @@ function getRecipeIdFromQuery() {
 
 function splitLines(value) {
   return String(value ?? '')
+    .replaceAll('\\n', '\n')
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
+}
+
+function stripLeadingStepNumber(step) {
+  return step.replace(/^\d+\.\s*/, '');
 }
 
 function renderIngredientList(root, recipe) {
@@ -24,8 +29,8 @@ function renderIngredientList(root, recipe) {
   list.innerHTML = ingredients
     .map(
       (ingredient) => `
-        <li class="recipe-details__ingredient d-flex gap-2 align-items-start">
-          <span class="badge text-bg-light border text-uppercase fw-semibold">•</span>
+        <li class="recipe-details__ingredient d-flex gap-3 align-items-start">
+          <span class="recipe-details__bullet" aria-hidden="true"></span>
           <span>${escapeHtml(ingredient)}</span>
         </li>
       `,
@@ -43,8 +48,11 @@ function renderStepList(root, recipe) {
 
   list.innerHTML = steps
     .map(
-      (step) => `
-        <div class="recipe-details__step">${escapeHtml(step)}</div>
+      (step, index) => `
+        <article class="recipe-details__step">
+          <div class="recipe-details__step-number">${index + 1}</div>
+          <p class="mb-0">${escapeHtml(stripLeadingStepNumber(step))}</p>
+        </article>
       `,
     )
     .join('');
@@ -111,5 +119,6 @@ async function renderRecipeDetails(root) {
  * @param {HTMLElement} root
  */
 export async function setupRecipeDetailsPage(root) {
+  root.querySelector('[data-recipe-details-shell]')?.classList.remove('d-none');
   await renderRecipeDetails(root);
 }
