@@ -66,7 +66,7 @@ function renderTable(root, recipes) {
           <td>
             <div class="d-flex flex-wrap gap-2">
               <a class="btn btn-outline-secondary btn-sm" href="/pages/recipe-details.html?id=${recipe.id}">View Recipe</a>
-              <a class="btn btn-outline-primary btn-sm" href="/recipe/${recipe.id}/edit">Edit</a>
+              <a class="btn btn-outline-primary btn-sm" href="/recipe-edit.html?id=${recipe.id}">Edit</a>
               <button class="btn btn-outline-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteRecipeModal" data-delete-recipe-id="${recipe.id}" data-delete-recipe-title="${escapeHtml(recipe.title)}" data-delete-recipe-image-url="${escapeHtml(recipe.imageUrl ?? '')}">Delete</button>
             </div>
           </td>
