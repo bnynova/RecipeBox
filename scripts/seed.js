@@ -50,7 +50,7 @@ const seedRecipes = [
       '4. Cook spoonfuls of batter on a lightly buttered skillet until golden on both sides.',
       '5. Serve warm with berries and maple syrup.',
     ],
-    imageUrl: 'https://picsum.photos/seed/recipebox-fluffy-ricotta-pancakes/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1200&q=80',
   },
   {
     title: 'Overnight Berry Oats',
@@ -71,7 +71,7 @@ const seedRecipes = [
       '3. In the morning, stir again and top with fresh berries.',
       '4. Serve chilled or let it sit a few minutes if you prefer it less cold.',
     ],
-    imageUrl: 'https://picsum.photos/seed/recipebox-overnight-berry-oats/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=1200&q=80',
   },
   {
     title: 'Shakshuka with Feta',
@@ -94,7 +94,7 @@ const seedRecipes = [
       '4. Cover and cook until the whites are set but the yolks are still soft.',
       '5. Finish with feta and parsley, then serve with bread.',
     ],
-    imageUrl: 'https://picsum.photos/seed/recipebox-shakshuka-feta/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80',
   },
   {
     title: 'Lemon Herb Roast Chicken',
@@ -117,7 +117,7 @@ const seedRecipes = [
       '4. Roast until the skin is golden and the juices run clear.',
       '5. Rest before carving and serve with roasted vegetables.',
     ],
-    imageUrl: 'https://picsum.photos/seed/recipebox-lemon-herb-roast-chicken/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1518492104633-130d0cc84637?auto=format&fit=crop&w=1200&q=80',
   },
   {
     title: 'Garlic Butter Salmon with Asparagus',
@@ -139,7 +139,7 @@ const seedRecipes = [
       '4. Return the salmon to the pan and spoon the butter sauce over the top.',
       '5. Finish with lemon juice and serve immediately.',
     ],
-    imageUrl: 'https://picsum.photos/seed/recipebox-garlic-butter-salmon/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=1200&q=80',
   },
   {
     title: 'Mushroom Risotto',
@@ -162,7 +162,7 @@ const seedRecipes = [
       '4. Stir until the rice is creamy and tender.',
       '5. Fold in mushrooms and parmesan before serving.',
     ],
-    imageUrl: 'https://picsum.photos/seed/recipebox-mushroom-risotto/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=1200&q=80',
   },
   {
     title: 'Crunchy Chickpea Salad',
@@ -184,7 +184,7 @@ const seedRecipes = [
       '3. Whisk olive oil, lemon juice, salt, and pepper for the dressing.',
       '4. Add the chickpeas and dressing to the salad just before serving.',
     ],
-    imageUrl: 'https://picsum.photos/seed/recipebox-chickpea-salad/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80',
   },
   {
     title: 'Mediterranean Cucumber Tomato Salad',
@@ -205,7 +205,7 @@ const seedRecipes = [
       '3. Whisk olive oil, vinegar, salt, and pepper.',
       '4. Toss the salad with the vinaigrette right before serving.',
     ],
-    imageUrl: 'https://picsum.photos/seed/recipebox-mediterranean-salad/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80',
   },
   {
     title: 'Creamy Tomato Basil Soup',
@@ -228,7 +228,7 @@ const seedRecipes = [
       '4. Stir in cream and basil, then season to taste.',
       '5. Serve hot with toasted bread.',
     ],
-    imageUrl: 'https://picsum.photos/seed/recipebox-tomato-basil-soup/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1547592180-194f0d4b6d3f?auto=format&fit=crop&w=1200&q=80',
   },
   {
     title: 'Roasted Butternut Squash Soup',
@@ -251,7 +251,7 @@ const seedRecipes = [
       '4. Blend until silky smooth.',
       '5. Serve with cream and toasted seeds if desired.',
     ],
-    imageUrl: 'https://picsum.photos/seed/recipebox-butternut-squash-soup/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1547592180-7077b7b8e1bf?auto=format&fit=crop&w=1200&q=80',
   },
   {
     title: 'Coconut Lentil Curry',
@@ -275,7 +275,7 @@ const seedRecipes = [
       '4. Stir in spinach until wilted and season to taste.',
       '5. Finish with lime juice and serve over rice.',
     ],
-    imageUrl: 'https://picsum.photos/seed/recipebox-coconut-lentil-curry/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1517248135467-7b3d1c2d0b14?auto=format&fit=crop&w=1200&q=80',
   },
   {
     title: 'Dark Chocolate Berry Tart',
@@ -296,7 +296,7 @@ const seedRecipes = [
       '3. Pour the ganache into the tart shell and chill until set.',
       '4. Arrange berries on top before serving.',
     ],
-    imageUrl: 'https://picsum.photos/seed/recipebox-dark-chocolate-berry-tart/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=1200&q=80',
   },
 ];
 
