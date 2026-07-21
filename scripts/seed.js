@@ -228,7 +228,7 @@ const seedRecipes = [
       '4. Stir in cream and basil, then season to taste.',
       '5. Serve hot with toasted bread.',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1547592180-194f0d4b6d3f?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'https://loremflickr.com/1200/800/soup',
   },
   {
     title: 'Roasted Butternut Squash Soup',
@@ -251,7 +251,7 @@ const seedRecipes = [
       '4. Blend until silky smooth.',
       '5. Serve with cream and toasted seeds if desired.',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1547592180-7077b7b8e1bf?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'https://loremflickr.com/1200/800/butternut-squash',
   },
   {
     title: 'Coconut Lentil Curry',
@@ -275,7 +275,7 @@ const seedRecipes = [
       '4. Stir in spinach until wilted and season to taste.',
       '5. Finish with lime juice and serve over rice.',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1517248135467-7b3d1c2d0b14?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'https://loremflickr.com/1200/800/lentil-curry',
   },
   {
     title: 'Dark Chocolate Berry Tart',
