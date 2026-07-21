@@ -11,6 +11,10 @@ function getRecipeIdFromPathname(pathname) {
   return match?.[1] ?? null;
 }
 
+function getRecipeIdFromLocation() {
+  return getRecipeIdFromPathname(window.location.pathname) ?? new URLSearchParams(window.location.search).get('id');
+}
+
 function getModeFromRoot(root) {
   return root.dataset.recipeFormMode ?? 'add';
 }
@@ -312,7 +316,7 @@ async function handleSubmit(root, event, mode, recipeId, previewState) {
  */
 export async function setupRecipeFormPage(root) {
   const mode = getModeFromRoot(root);
-  const recipeId = getRecipeIdFromPathname(window.location.pathname);
+  const recipeId = getRecipeIdFromLocation();
   const titleElement = root.querySelector('[data-recipe-form-title]');
   const statusElement = root.querySelector('[data-form-status]');
   const imageInput = root.querySelector('[name="imageFile"]');
@@ -338,6 +342,10 @@ export async function setupRecipeFormPage(root) {
       fillForm(root, recipe, previewState);
     } else {
       showImagePreview(root, previewState, null);
+    }
+
+    if (mode === 'edit' && !recipeId) {
+      showFormAlert(root, 'Missing recipe id.');
     }
 
     if (imageInput instanceof HTMLInputElement) {

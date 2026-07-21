@@ -36,10 +36,12 @@ export default defineConfig({
             req.url = '/recipe-add.html';
           } else if (req.url === '/recipe/add/') {
             req.url = '/recipe-add.html';
-          } else if (/^\/recipe\/[^/]+\/edit$/.test(req.url ?? '')) {
-            req.url = '/recipe-edit.html';
-          } else if (/^\/recipe\/[^/]+\/edit\/$/.test(req.url ?? '')) {
-            req.url = '/recipe-edit.html';
+          } else if (/^\/recipe\/([^/]+)\/edit$/.test(req.url ?? '')) {
+            const match = req.url?.match(/^\/recipe\/([^/]+)\/edit$/);
+            req.url = `/recipe-edit.html?id=${match?.[1] ?? ''}`;
+          } else if (/^\/recipe\/([^/]+)\/edit\/$/.test(req.url ?? '')) {
+            const match = req.url?.match(/^\/recipe\/([^/]+)\/edit\/$/);
+            req.url = `/recipe-edit.html?id=${match?.[1] ?? ''}`;
           }
 
           next();
@@ -59,10 +61,12 @@ export default defineConfig({
             req.url = '/recipe-add.html';
           } else if (req.url === '/recipe/add/') {
             req.url = '/recipe-add.html';
-          } else if (/^\/recipe\/[^/]+\/edit$/.test(req.url ?? '')) {
-            req.url = '/recipe-edit.html';
-          } else if (/^\/recipe\/[^/]+\/edit\/$/.test(req.url ?? '')) {
-            req.url = '/recipe-edit.html';
+          } else if (/^\/recipe\/([^/]+)\/edit$/.test(req.url ?? '')) {
+            const match = req.url?.match(/^\/recipe\/([^/]+)\/edit$/);
+            req.url = `/recipe-edit.html?id=${match?.[1] ?? ''}`;
+          } else if (/^\/recipe\/([^/]+)\/edit\/$/.test(req.url ?? '')) {
+            const match = req.url?.match(/^\/recipe\/([^/]+)\/edit\/$/);
+            req.url = `/recipe-edit.html?id=${match?.[1] ?? ''}`;
           }
 
           next();
