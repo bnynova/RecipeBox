@@ -1,3 +1,5 @@
+import { Modal } from 'bootstrap';
+
 import { showToast } from '../components/toasts.js';
 import { deleteRecipe, listMyRecipes } from '../services/recipesService.js';
 import { escapeHtml, truncateText } from '../utils/helpers.js';
@@ -88,6 +90,12 @@ function openDeleteModal(root, recipeId, recipeTitle) {
   modalElement.querySelector('[data-delete-modal-title]')?.replaceChildren(document.createTextNode(recipeTitle));
 }
 
+function cleanupModalArtifacts() {
+  document.querySelectorAll('.modal-backdrop').forEach((backdrop) => backdrop.remove());
+  document.body.classList.remove('modal-open');
+  document.body.style.removeProperty('padding-right');
+}
+
 /**
  * Wire up the My Recipes page.
  * @param {HTMLElement} root
@@ -145,7 +153,8 @@ export async function setupMyRecipesPage(root) {
         renderTable(root, loadedRecipes);
       }
 
-      bootstrap.Modal.getOrCreateInstance(deleteModalElement).hide();
+      Modal.getOrCreateInstance(deleteModalElement).hide();
+      cleanupModalArtifacts();
     } catch (error) {
       showToast(error.message, { variant: 'error' });
     }
