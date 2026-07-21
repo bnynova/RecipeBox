@@ -121,6 +121,18 @@ a:hover {
   background: linear-gradient(135deg, rgba(196, 95, 45, 0.2), rgba(77, 42, 23, 0.08));
 }
 
+.recipe-details__image,
+.recipe-details__placeholder {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  object-fit: cover;
+  background: linear-gradient(135deg, rgba(196, 95, 45, 0.2), rgba(77, 42, 23, 0.08));
+}
+
+.recipe-details__image-wrap {
+  min-height: 100%;
+}
+
 .recipe-card__placeholder {
   min-height: 12rem;
 }
@@ -247,4 +259,15 @@ a:hover {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.recipe-details__ingredient + .recipe-details__ingredient {
+  margin-top: 0.45rem;
+}
+
+.recipe-details__step {
+  padding: 1rem 1.1rem;
+  border-radius: 1rem;
+  border: 1px solid var(--rb-border);
+  background: rgba(255, 255, 255, 0.7);
 }

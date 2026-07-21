@@ -6,6 +6,7 @@ import { createNavbar } from './components/navbar.js';
 import { showToast } from './components/toasts.js';
 import { setupDashboardPage } from './pages/dashboardPage.js';
 import { setupAuthPage } from './pages/authPage.js';
+import { setupRecipeDetailsPage } from './pages/recipeDetailsPage.js';
 import { setupMyRecipesPage } from './pages/myRecipesPage.js';
 import { setupRecipeFormPage } from './pages/recipeFormPage.js';
 import {
@@ -100,6 +101,10 @@ async function bootstrap() {
 
   if (activePage === 'dashboard') {
     void setupDashboardPage(document);
+  }
+
+  if (activePage === 'recipe-details') {
+    void setupRecipeDetailsPage(document);
   }
 
   if (activePage === 'my-recipes') {

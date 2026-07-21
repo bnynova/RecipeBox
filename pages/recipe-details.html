@@ -12,27 +12,38 @@
         <section class="page-panel mb-4">
           <div class="row g-4 align-items-center">
             <div class="col-lg-6">
-              <div class="recipe-card__placeholder rounded-4"></div>
+              <div data-recipe-image-slot class="recipe-details__image-wrap rounded-4 overflow-hidden">
+                <div class="recipe-card__placeholder recipe-details__placeholder rounded-4 d-none" data-recipe-image-placeholder></div>
+                <img data-recipe-image class="recipe-details__image d-none" alt="Recipe image" />
+              </div>
             </div>
             <div class="col-lg-6">
               <p class="soft-label mb-2">Recipe details</p>
-              <h1 class="h2">Lemon Herb Chicken</h1>
-              <p class="text-secondary">This page is ready for recipe content, author details, and actions.</p>
+              <h1 class="h2" data-recipe-title>Loading recipe...</h1>
+              <p class="text-secondary" data-recipe-description>Fetching recipe details from Supabase.</p>
               <dl class="row mb-0">
                 <dt class="col-sm-4">Category</dt>
-                <dd class="col-sm-8">Dinner</dd>
+                <dd class="col-sm-8" data-recipe-category>—</dd>
                 <dt class="col-sm-4">Author</dt>
-                <dd class="col-sm-8">RecipeBox user</dd>
-                <dt class="col-sm-4">Prep time</dt>
-                <dd class="col-sm-8">30 minutes</dd>
+                <dd class="col-sm-8" data-recipe-author>—</dd>
+                <dt class="col-sm-4">Recipe ID</dt>
+                <dd class="col-sm-8" data-recipe-id>—</dd>
               </dl>
             </div>
           </div>
         </section>
 
         <section class="page-panel">
-          <h2 class="h4">Ingredients and steps</h2>
-          <p class="text-secondary mb-0">Supabase data bindings can be added here later without changing the page shell.</p>
+          <div class="row g-4">
+            <div class="col-lg-5">
+              <h2 class="h4">Ingredients</h2>
+              <ul class="list-unstyled mb-0" data-recipe-ingredients></ul>
+            </div>
+            <div class="col-lg-7">
+              <h2 class="h4">Steps</h2>
+              <div class="d-grid gap-3" data-recipe-steps></div>
+            </div>
+          </div>
         </section>
       </div>
     </main>

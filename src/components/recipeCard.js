@@ -19,7 +19,7 @@ export function createRecipeCard(recipe) {
     : `<div class="recipe-card__placeholder"></div>`;
 
   return `
-    <a class="card recipe-card h-100 shadow-sm text-decoration-none text-reset" href="${recipe.href ?? '/pages/recipe-details.html'}">
+    <a class="card recipe-card h-100 shadow-sm text-decoration-none text-reset" href="${recipe.href ?? (recipe.id ? `/pages/recipe-details.html?id=${recipe.id}` : '/pages/recipe-details.html')}">
       ${imageMarkup}
       <div class="card-body d-flex flex-column gap-2">
         <div class="d-flex justify-content-between align-items-start gap-2">
