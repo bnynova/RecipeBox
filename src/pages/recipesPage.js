@@ -1,6 +1,6 @@
 import { createRecipeCard } from '../components/recipeCard.js';
 import { showToast } from '../components/toasts.js';
-import { listCategories, listRecipes } from '../services/recipesService.js';
+import { filterRecipesByTag, listCategories, listRecipes, listTags } from '../services/recipesService.js';
 
 function normalizeSearchValue(value) {
   return value.trim().toLowerCase();
@@ -49,6 +49,7 @@ function renderGrid(root, recipes) {
 function applyFilters(root, state) {
   const searchQuery = normalizeSearchValue(root.querySelector('[data-recipes-search]')?.value ?? '');
   const categoryValue = root.querySelector('[data-recipes-category]')?.value ?? 'all';
+  const tagValue = root.querySelector('[data-recipes-tag]')?.value ?? 'all';
 
   const filteredRecipes = state.recipes.filter((recipe) => {
     const titleMatch = recipe.title.toLowerCase().includes(searchQuery);
@@ -78,6 +79,19 @@ function setCategoryOptions(root, categories) {
   ].join('');
 }
 
+function setTagOptions(root, tags) {
+  const select = root.querySelector('[data-recipes-tag]');
+
+  if (!select) {
+    return;
+  }
+
+  select.innerHTML = [
+    '<option value="all">All tags</option>',
+    ...tags.map((tag) => `<option value="${tag.id}">${tag.name}</option>`),
+  ].join('');
+}
+
 /**
  * Wire up the public recipes page.
  * @param {HTMLElement} root
@@ -86,22 +100,27 @@ export async function setupRecipesPage(root) {
   const state = {
     recipes: [],
     categories: [],
+    tags: [],
   };
 
   const searchInput = root.querySelector('[data-recipes-search]');
   const categorySelect = root.querySelector('[data-recipes-category]');
+  const tagSelect = root.querySelector('[data-recipes-tag]');
 
   searchInput?.addEventListener('input', () => applyFilters(root, state));
   categorySelect?.addEventListener('change', () => applyFilters(root, state));
+  tagSelect?.addEventListener('change', () => applyFilters(root, state));
 
   try {
     renderLoading(root);
 
-    const [categories, recipes] = await Promise.all([listCategories(), listRecipes()]);
+    const [categories, tags, recipes] = await Promise.all([listCategories(), listTags(), listRecipes()]);
     state.categories = categories;
+    state.tags = tags;
     state.recipes = recipes;
 
     setCategoryOptions(root, categories);
+    setTagOptions(root, tags);
 
     if (recipes.length === 0) {
       renderEmptyState(root);

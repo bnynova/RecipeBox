@@ -1,6 +1,6 @@
 import { createRecipeCard } from '../components/recipeCard.js';
 import { showToast } from '../components/toasts.js';
-import { listCategories, listDashboardRecipes } from '../services/recipesService.js';
+import { filterRecipesByTag, listCategories, listDashboardRecipes, listTags } from '../services/recipesService.js';
 
 function normalizeSearchValue(value) {
   return value.trim().toLowerCase();
@@ -47,8 +47,9 @@ function renderGrid(root, recipes) {
 function applyFilters(root, state) {
   const searchQuery = normalizeSearchValue(root.querySelector('[data-dashboard-search]')?.value ?? '');
   const categoryValue = root.querySelector('[data-dashboard-category]')?.value ?? 'all';
+  const tagValue = root.querySelector('[data-dashboard-tag]')?.value ?? 'all';
 
-  const filteredRecipes = state.recipes.filter((recipe) => {
+  const filteredRecipes = filterRecipesByTag(state.recipes, tagValue).filter((recipe) => {
     const titleMatch = recipe.title.toLowerCase().includes(searchQuery);
     const categoryMatch = categoryValue === 'all' || String(recipe.categoryId) === categoryValue;
 
@@ -75,6 +76,19 @@ function setCategoryOptions(root, categories) {
   ].join('');
 }
 
+function setTagOptions(root, tags) {
+  const select = root.querySelector('[data-dashboard-tag]');
+
+  if (!select) {
+    return;
+  }
+
+  select.innerHTML = [
+    '<option value="all">All tags</option>',
+    ...tags.map((tag) => `<option value="${tag.id}">${tag.name}</option>`),
+  ].join('');
+}
+
 /**
  * Wire up the dashboard page UI and data loading.
  * @param {HTMLElement} root
@@ -83,10 +97,12 @@ export async function setupDashboardPage(root) {
   const state = {
     recipes: [],
     categories: [],
+    tags: [],
   };
 
   const searchInput = root.querySelector('[data-dashboard-search]');
   const categorySelect = root.querySelector('[data-dashboard-category]');
+  const tagSelect = root.querySelector('[data-dashboard-tag]');
   const addRecipeButtons = root.querySelectorAll('[data-action="add-recipe"]');
 
   addRecipeButtons.forEach((button) => {
@@ -97,15 +113,18 @@ export async function setupDashboardPage(root) {
 
   searchInput?.addEventListener('input', () => applyFilters(root, state));
   categorySelect?.addEventListener('change', () => applyFilters(root, state));
+  tagSelect?.addEventListener('change', () => applyFilters(root, state));
 
   try {
     renderLoading(root);
 
-    const [categories, recipes] = await Promise.all([listCategories(), listDashboardRecipes()]);
+    const [categories, tags, recipes] = await Promise.all([listCategories(), listTags(), listDashboardRecipes()]);
     state.categories = categories;
+    state.tags = tags;
     state.recipes = recipes;
 
     setCategoryOptions(root, categories);
+    setTagOptions(root, tags);
 
     if (recipes.length === 0) {
       renderEmptyState(root);

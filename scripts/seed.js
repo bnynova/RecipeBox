@@ -228,7 +228,7 @@ const seedRecipes = [
       '4. Stir in cream and basil, then season to taste.',
       '5. Serve hot with toasted bread.',
     ],
-    imageUrl: 'https://loremflickr.com/1200/800/soup',
+    imageUrl: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=1200&q=80',
   },
   {
     title: 'Roasted Butternut Squash Soup',
@@ -300,6 +300,25 @@ const seedRecipes = [
   },
 ];
 
+const seedRecipeTagsByTitle = new Map([
+  ['Fluffy Ricotta Pancakes', ['breakfast', 'sweet', 'quick']],
+  ['Overnight Berry Oats', ['breakfast', 'make-ahead', 'healthy']],
+  ['Shakshuka with Feta', ['breakfast', 'spicy', 'vegetarian']],
+  ['Lemon Herb Roast Chicken', ['dinner', 'roasted', 'lemon']],
+  ['Garlic Butter Salmon with Asparagus', ['seafood', 'quick', 'healthy']],
+  ['Mushroom Risotto', ['comfort-food', 'vegetarian', 'creamy']],
+  ['Crunchy Chickpea Salad', ['vegan', 'salad', 'quick']],
+  ['Mediterranean Cucumber Tomato Salad', ['salad', 'fresh', 'gluten-free']],
+  ['Creamy Tomato Basil Soup', ['soup', 'cozy', 'vegetarian']],
+  ['Roasted Butternut Squash Soup', ['soup', 'cozy', 'seasonal']],
+  ['Coconut Lentil Curry', ['vegan', 'spicy', 'one-pot']],
+  ['Dark Chocolate Berry Tart', ['dessert', 'chocolate', 'festive']],
+]);
+
+function getSeedTagNames() {
+  return [...new Set([...seedRecipeTagsByTitle.values()].flat())];
+}
+
 function buildRecipePayloads(users, categories) {
   const categoryIdByName = new Map(categories.map((category) => [category.name, category.id]));
 
@@ -361,9 +380,45 @@ async function replaceSampleRecipes(recipes) {
     throw new Error(`Failed to remove existing sample recipes: ${deleteResult.error.message}`);
   }
 
-  const { error } = await supabase.from('recipes').insert(recipes);
+  const { data, error } = await supabase.from('recipes').insert(recipes).select('id, title');
   if (error) {
     throw new Error(`Failed to insert sample recipes: ${error.message}`);
+  }
+
+  return data ?? [];
+}
+
+async function seedTags() {
+  const tagNames = getSeedTagNames();
+
+  const { data, error } = await supabase
+    .from('tags')
+    .upsert(tagNames.map((name) => ({ name })), { onConflict: 'name' })
+    .select('id, name');
+
+  if (error) {
+    throw new Error(`Failed to seed tags: ${error.message}`);
+  }
+
+  return new Map(data.map((tag) => [tag.name, tag.id]));
+}
+
+async function seedRecipeTags(recipes, tagIdByName) {
+  const rows = recipes.flatMap((recipe) => {
+    const tagNames = seedRecipeTagsByTitle.get(recipe.title) ?? [];
+
+    return tagNames
+      .map((tagName) => ({
+        recipe_id: recipe.id,
+        tag_id: tagIdByName.get(tagName),
+      }))
+      .filter((row) => row.tag_id);
+  });
+
+  const { error } = await supabase.from('recipe_tags').insert(rows);
+
+  if (error) {
+    throw new Error(`Failed to seed recipe tags: ${error.message}`);
   }
 }
 
@@ -379,7 +434,9 @@ async function main() {
   console.log(`Seeded ${categories.length} categories.`);
 
   const recipes = buildRecipePayloads(users, categories);
-  await replaceSampleRecipes(recipes);
+  const insertedRecipes = await replaceSampleRecipes(recipes);
+  const tagIdByName = await seedTags();
+  await seedRecipeTags(insertedRecipes, tagIdByName);
 
   console.log(`Seeded ${recipes.length} recipes.`);
   console.log('RecipeBox seed complete.');

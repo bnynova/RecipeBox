@@ -1,0 +1,24 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">RecipeBox recipe illustration</title>
+  <desc id="desc">A warm illustrated kitchen scene with a plate, herbs, and cutlery.</desc>
+  <rect width="800" height="600" rx="40" fill="#F7EFE6"/>
+  <circle cx="640" cy="120" r="120" fill="#EEC8AF" fill-opacity="0.35"/>
+  <circle cx="130" cy="500" r="160" fill="#D88A57" fill-opacity="0.18"/>
+  <rect x="110" y="120" width="580" height="360" rx="34" fill="#FFF8F1" stroke="#E3D2C4" stroke-width="6"/>
+  <rect x="165" y="165" width="215" height="18" rx="9" fill="#D59D73" fill-opacity="0.55"/>
+  <rect x="165" y="202" width="152" height="12" rx="6" fill="#C9B4A0" fill-opacity="0.75"/>
+  <rect x="165" y="230" width="188" height="12" rx="6" fill="#C9B4A0" fill-opacity="0.55"/>
+  <circle cx="558" cy="280" r="104" fill="#FFF3EA" stroke="#E8D6C8" stroke-width="6"/>
+  <circle cx="558" cy="280" r="66" fill="#F0C8A7" fill-opacity="0.42"/>
+  <circle cx="558" cy="280" r="28" fill="#D8793F" fill-opacity="0.55"/>
+  <path d="M560 145C565 182 574 205 600 224" stroke="#8B5C3D" stroke-width="8" stroke-linecap="round"/>
+  <path d="M600 224C623 206 636 187 648 160" stroke="#8B5C3D" stroke-width="8" stroke-linecap="round"/>
+  <path d="M483 184C500 202 512 224 514 246" stroke="#69A05F" stroke-width="10" stroke-linecap="round"/>
+  <path d="M484 184C468 199 459 216 452 238" stroke="#69A05F" stroke-width="10" stroke-linecap="round"/>
+  <path d="M160 360H640" stroke="#E4D7CC" stroke-width="6" stroke-linecap="round"/>
+  <rect x="190" y="388" width="108" height="22" rx="11" fill="#D59D73" fill-opacity="0.5"/>
+  <rect x="316" y="388" width="152" height="22" rx="11" fill="#8AB38A" fill-opacity="0.48"/>
+  <rect x="486" y="388" width="104" height="22" rx="11" fill="#D9774D" fill-opacity="0.48"/>
+  <path d="M246 102L258 124L282 130L258 136L246 158L234 136L210 130L234 124L246 102Z" fill="#D9774D" fill-opacity="0.58"/>
+  <path d="M650 180L658 195L675 199L658 203L650 218L642 203L625 199L642 195L650 180Z" fill="#69A05F" fill-opacity="0.6"/>
+</svg>

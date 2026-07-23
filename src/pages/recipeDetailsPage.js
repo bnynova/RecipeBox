@@ -1,7 +1,8 @@
 import { showToast } from '../components/toasts.js';
-import { getRecipeById, listRecipeComments } from '../services/recipesService.js';
+import { getRecipeById } from '../services/recipesService.js';
 import { escapeHtml } from '../utils/helpers.js';
-import { icon, renderRatingStars } from '../components/icons.js';
+
+const FALLBACK_IMAGE_URL = '/images/dish-illustration.svg';
 
 function getRecipeIdFromQuery() {
   return new URLSearchParams(window.location.search).get('id');
@@ -59,54 +60,23 @@ function renderStepList(root, recipe) {
     .join('');
 }
 
-function renderCommentsLoading(root) {
-  root.querySelector('[data-recipe-comments-loading]')?.classList.remove('d-none');
-  root.querySelector('[data-recipe-comments-empty]')?.classList.add('d-none');
-  root.querySelector('[data-recipe-comments-list]')?.classList.add('d-none');
-}
+function renderTagBadges(root, recipe) {
+  const tagsContainer = root.querySelector('[data-recipe-tags]');
 
-function renderCommentsEmpty(root, message = 'No comments yet') {
-  const empty = root.querySelector('[data-recipe-comments-empty]');
-
-  if (empty) {
-    empty.querySelector('[data-empty-message]')?.replaceChildren(document.createTextNode(message));
-    empty.classList.remove('d-none');
-  }
-
-  root.querySelector('[data-recipe-comments-loading]')?.classList.add('d-none');
-  root.querySelector('[data-recipe-comments-list]')?.classList.add('d-none');
-}
-
-function renderComments(root, comments) {
-  const list = root.querySelector('[data-recipe-comments-list]');
-
-  if (!list) {
+  if (!tagsContainer) {
     return;
   }
 
-  list.innerHTML = comments
-    .map((comment) => `
-      <article class="page-panel comment-card">
-        <div class="d-flex align-items-start gap-3 mb-3">
-          <div class="comment-card__avatar rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center fw-semibold">
-            ${comment.authorAvatarUrl ? `<img src="${comment.authorAvatarUrl}" alt="${escapeHtml(comment.authorName)}" class="w-100 h-100" style="object-fit: cover;" />` : icon('bi-chat-left-text-fill')}
-          </div>
-          <div class="flex-grow-1">
-            <div class="d-flex flex-wrap align-items-center gap-2 justify-content-between">
-              <h3 class="h6 mb-0">${escapeHtml(comment.authorName)}</h3>
-              <span class="small text-secondary">${new Date(comment.createdAt).toLocaleDateString()}</span>
-            </div>
-            <div class="mt-1">${renderRatingStars(comment.rating, { showValue: true })}</div>
-          </div>
-        </div>
-        <p class="mb-0 text-secondary">${escapeHtml(comment.content)}</p>
-      </article>
-    `)
-    .join('');
+  const tags = recipe.tags ?? [];
 
-  list.classList.remove('d-none');
-  root.querySelector('[data-recipe-comments-loading]')?.classList.add('d-none');
-  root.querySelector('[data-recipe-comments-empty]')?.classList.add('d-none');
+  if (tags.length === 0) {
+    tagsContainer.innerHTML = '';
+    return;
+  }
+
+  tagsContainer.innerHTML = tags
+    .map((tag) => `<span class="badge rounded-pill text-bg-light border text-uppercase fw-semibold">${escapeHtml(tag.name)}</span>`)
+    .join('');
 }
 
 function renderRecipe(root, recipe) {
@@ -114,7 +84,6 @@ function renderRecipe(root, recipe) {
   const description = root.querySelector('[data-recipe-description]');
   const category = root.querySelector('[data-recipe-category]');
   const author = root.querySelector('[data-recipe-author]');
-  const recipeId = root.querySelector('[data-recipe-id]');
   const image = root.querySelector('[data-recipe-image]');
   const placeholder = root.querySelector('[data-recipe-image-placeholder]');
 
@@ -122,7 +91,6 @@ function renderRecipe(root, recipe) {
   description?.replaceChildren(document.createTextNode(recipe.description ?? ''));
   category?.replaceChildren(document.createTextNode(recipe.categoryName ?? 'Uncategorized'));
   author?.replaceChildren(document.createTextNode(recipe.authorName ?? 'Unknown author'));
-  recipeId?.replaceChildren(document.createTextNode(String(recipe.id ?? '—')));
 
   if (recipe.imageUrl) {
     if (image instanceof HTMLImageElement) {
@@ -130,8 +98,9 @@ function renderRecipe(root, recipe) {
       image.alt = recipe.title ?? 'Recipe image';
       image.classList.remove('d-none');
       image.onerror = () => {
-        image.classList.add('d-none');
-        placeholder?.classList.remove('d-none');
+        image.onerror = null;
+        image.src = FALLBACK_IMAGE_URL;
+        image.alt = 'Recipe illustration';
       };
     }
     placeholder?.classList.add('d-none');
@@ -142,6 +111,7 @@ function renderRecipe(root, recipe) {
 
   renderIngredientList(root, recipe);
   renderStepList(root, recipe);
+  renderTagBadges(root, recipe);
 }
 
 async function renderRecipeDetails(root) {
@@ -153,27 +123,15 @@ async function renderRecipeDetails(root) {
   }
 
   try {
-    renderCommentsLoading(root);
-    const [recipe, comments] = await Promise.all([getRecipeById(recipeId), listRecipeComments(recipeId)]);
+    const recipe = await getRecipeById(recipeId);
     renderRecipe(root, recipe);
-
-    if (comments.length === 0) {
-      renderCommentsEmpty(root);
-    } else {
-      renderComments(root, comments);
-    }
   } catch (error) {
     showToast(error.message, { variant: 'error' });
     const title = root.querySelector('[data-recipe-title]');
     const description = root.querySelector('[data-recipe-description]');
-    const commentsEmpty = root.querySelector('[data-recipe-comments-empty]');
 
     title?.replaceChildren(document.createTextNode('Recipe not found'));
     description?.replaceChildren(document.createTextNode('Unable to load this recipe.'));
-    if (commentsEmpty) {
-      commentsEmpty.querySelector('[data-empty-message]')?.replaceChildren(document.createTextNode('Unable to load comments.'));
-      commentsEmpty.classList.remove('d-none');
-    }
   }
 }
 
@@ -182,8 +140,6 @@ async function renderRecipeDetails(root) {
  * @param {HTMLElement} root
  */
 export async function setupRecipeDetailsPage(root) {
-  root.querySelector('[data-recipe-details-loading]')?.classList.remove('d-none');
   root.querySelector('[data-recipe-details-shell]')?.classList.remove('d-none');
   await renderRecipeDetails(root);
-  root.querySelector('[data-recipe-details-loading]')?.classList.add('d-none');
 }

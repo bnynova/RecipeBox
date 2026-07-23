@@ -9,18 +9,11 @@
     <div data-navbar-root></div>
     <main class="page-shell">
       <div class="container">
-        <section class="page-panel mb-4 d-none" data-recipe-details-loading>
-          <div class="d-flex align-items-center justify-content-center gap-3 py-5">
-            <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
-            <span class="fw-semibold">Loading recipe details...</span>
-          </div>
-        </section>
-
         <section class="page-panel mb-4 d-none" data-recipe-details-shell>
           <div class="row g-4 align-items-stretch">
             <div class="col-lg-5">
               <div data-recipe-image-slot class="recipe-details__image-wrap rounded-4 overflow-hidden h-100">
-                <div class="recipe-card__placeholder recipe-details__placeholder rounded-4 d-none" data-recipe-image-placeholder></div>
+                <img data-recipe-image-placeholder class="recipe-details__image rounded-4 d-none" src="/images/dish-illustration.svg" alt="Recipe illustration" />
                 <img data-recipe-image class="recipe-details__image d-none" alt="Recipe image" />
               </div>
             </div>
@@ -29,18 +22,21 @@
               <p class="soft-label mb-2">Recipe details</p>
               <h1 class="h2" data-recipe-title>Loading recipe...</h1>
               <p class="text-secondary" data-recipe-description>Fetching recipe details from Supabase.</p>
-              <div class="d-flex flex-wrap gap-2 mb-3">
-                <span class="badge text-bg-light border text-uppercase fw-semibold" data-recipe-category-badge>Category</span>
-                <span class="badge text-bg-light border text-uppercase fw-semibold" data-recipe-author-badge>Author</span>
+              <div class="d-flex flex-wrap gap-2 mb-3" data-recipe-tags></div>
+              <div class="row g-3 pt-1">
+                <div class="col-md-6">
+                  <div class="rounded-4 border bg-body-tertiary px-3 py-2 h-100">
+                    <div class="soft-label mb-1">Category</div>
+                    <div class="fw-semibold fs-5" data-recipe-category>—</div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="rounded-4 border bg-body-tertiary px-3 py-2 h-100">
+                    <div class="soft-label mb-1">Author</div>
+                    <div class="fw-semibold fs-5" data-recipe-author>—</div>
+                  </div>
+                </div>
               </div>
-              <dl class="row mb-0">
-                <dt class="col-sm-4">Category</dt>
-                <dd class="col-sm-8" data-recipe-category>—</dd>
-                <dt class="col-sm-4">Author</dt>
-                <dd class="col-sm-8" data-recipe-author>—</dd>
-                <dt class="col-sm-4">Recipe ID</dt>
-                <dd class="col-sm-8" data-recipe-id>—</dd>
-              </dl>
               </div>
             </div>
           </div>
@@ -59,28 +55,6 @@
               <div class="d-grid gap-3 recipe-details__steps" data-recipe-steps></div>
             </div>
           </div>
-        </section>
-
-        <section class="page-panel mt-4">
-          <div class="d-flex align-items-end justify-content-between gap-3 mb-3">
-            <div>
-              <h2 class="h4 mb-1"><i class="bi bi-chat-left-text-fill me-2 text-secondary" aria-hidden="true"></i>Comments</h2>
-              <p class="text-secondary mb-0">Read what other cooks think about this recipe.</p>
-            </div>
-          </div>
-
-          <div class="d-flex align-items-center gap-2 text-secondary py-4" data-recipe-comments-loading>
-            <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
-            <span>Loading comments...</span>
-          </div>
-
-          <div class="text-center py-4 d-none" data-recipe-comments-empty>
-            <i class="bi bi-chat-left-dots display-6 text-secondary mb-3" aria-hidden="true"></i>
-            <h3 class="h5 mb-2">No comments yet</h3>
-            <p class="text-secondary mb-0" data-empty-message>No comments yet.</p>
-          </div>
-
-          <div class="d-grid gap-3 d-none" data-recipe-comments-list></div>
         </section>
       </div>
     </main>

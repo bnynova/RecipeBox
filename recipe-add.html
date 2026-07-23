@@ -43,6 +43,18 @@
                 <div class="form-text">Upload a JPG, PNG, or WebP image up to 5 MB.</div>
               </div>
             </div>
+            <div class="border rounded-4 p-3 bg-body-tertiary">
+              <div class="d-flex flex-wrap align-items-end gap-2">
+                <div class="flex-grow-1">
+                  <label class="form-label" for="recipe-tags-input">Tags</label>
+                  <input id="recipe-tags-input" class="form-control" type="text" list="recipe-tags-options" placeholder="Type a tag like vegan or quick" data-tag-input />
+                  <datalist id="recipe-tags-options" data-tag-options></datalist>
+                </div>
+                <button class="btn btn-outline-primary" type="button" data-add-tag><i class="bi bi-plus-circle me-2" aria-hidden="true"></i>Add tag</button>
+              </div>
+              <div class="form-text mt-2">Select an existing tag or create a new one.</div>
+              <div class="d-flex flex-wrap gap-2 mt-3" data-selected-tags></div>
+            </div>
             <div class="recipe-details__image-wrap rounded-4 overflow-hidden" data-recipe-image-preview-surface>
               <div class="recipe-card__placeholder recipe-details__placeholder d-none" data-recipe-image-preview-empty></div>
               <img class="recipe-details__image d-none" data-recipe-image-preview alt="Recipe photo preview" />

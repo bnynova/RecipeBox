@@ -1,0 +1,33 @@
+<svg width="960" height="720" viewBox="0 0 960 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Stylized dish illustration</title>
+  <desc id="desc">A warm plated dish with herbs and vegetables on a soft kitchen background.</desc>
+  <rect width="960" height="720" rx="44" fill="#F7EFE4"/>
+  <circle cx="820" cy="110" r="130" fill="#E8C9A9" fill-opacity="0.35"/>
+  <circle cx="150" cy="610" r="190" fill="#D97A45" fill-opacity="0.16"/>
+  <rect x="92" y="90" width="776" height="540" rx="40" fill="#FFF9F2" stroke="#E6D6C8" stroke-width="6"/>
+
+  <rect x="156" y="164" width="216" height="18" rx="9" fill="#D28A5B" fill-opacity="0.52"/>
+  <rect x="156" y="198" width="148" height="12" rx="6" fill="#C9B2A0" fill-opacity="0.72"/>
+  <rect x="156" y="226" width="184" height="12" rx="6" fill="#C9B2A0" fill-opacity="0.5"/>
+
+  <ellipse cx="612" cy="394" rx="176" ry="176" fill="#FFF2E5" stroke="#E7D4C6" stroke-width="8"/>
+  <ellipse cx="612" cy="394" rx="130" ry="130" fill="#FFDDBE" fill-opacity="0.9"/>
+  <ellipse cx="612" cy="394" rx="76" ry="76" fill="#D9793F" fill-opacity="0.72"/>
+  <ellipse cx="612" cy="394" rx="28" ry="28" fill="#8F5A2B" fill-opacity="0.62"/>
+
+  <path d="M490 352C530 322 572 308 612 308C656 308 694 322 728 350" stroke="#71A063" stroke-width="18" stroke-linecap="round"/>
+  <path d="M492 436C536 468 580 484 620 484C662 484 702 470 736 440" stroke="#71A063" stroke-width="18" stroke-linecap="round"/>
+  <path d="M542 274C558 246 582 228 610 220C648 210 676 220 704 242" stroke="#8BC48A" stroke-width="14" stroke-linecap="round"/>
+
+  <path d="M402 502H756" stroke="#E2D3C7" stroke-width="6" stroke-linecap="round"/>
+  <rect x="244" y="534" width="140" height="28" rx="14" fill="#D8A36F" fill-opacity="0.54"/>
+  <rect x="406" y="534" width="194" height="28" rx="14" fill="#86B88C" fill-opacity="0.48"/>
+  <rect x="626" y="534" width="112" height="28" rx="14" fill="#D86D42" fill-opacity="0.48"/>
+
+  <path d="M260 286L276 318L312 326L276 334L260 366L244 334L208 326L244 318L260 286Z" fill="#D86D42" fill-opacity="0.56"/>
+  <path d="M748 204L758 224L780 229L758 234L748 254L738 234L716 229L738 224L748 204Z" fill="#86B88C" fill-opacity="0.62"/>
+  <path d="M204 454L214 474L236 479L214 484L204 504L194 484L172 479L194 474L204 454Z" fill="#8C613B" fill-opacity="0.42"/>
+
+  <path d="M190 116L202 142L230 148L202 154L190 180L178 154L150 148L178 142L190 116Z" fill="#D9793F" fill-opacity="0.6"/>
+  <path d="M780 132L792 158L820 164L792 170L780 196L768 170L740 164L768 158L780 132Z" fill="#71A063" fill-opacity="0.58"/>
+</svg>

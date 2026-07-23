@@ -5,7 +5,7 @@ import { deleteRecipe, listMyRecipes } from '../services/recipesService.js';
 import { escapeHtml, truncateText } from '../utils/helpers.js';
 import { getCurrentUser } from '../services/authService.js';
 import { deleteRecipeImageByUrl } from '../services/storageService.js';
-import { icon, renderRatingStars } from '../components/icons.js';
+import { icon } from '../components/icons.js';
 
 const FLASH_TOAST_KEY = 'recipebox:flash-toast';
 
@@ -23,14 +23,6 @@ function takeFlashToast() {
   } catch {
     return null;
   }
-}
-
-function formatAverageRating(value) {
-  if (value === null || value === undefined) {
-    return renderRatingStars(null, { muted: true });
-  }
-
-  return renderRatingStars(value, { showValue: true });
 }
 
 function renderLoading(root) {
@@ -62,8 +54,6 @@ function renderTable(root, recipes) {
           <td class="fw-semibold">${escapeHtml(recipe.title)}</td>
           <td>${escapeHtml(recipe.categoryName)}</td>
           <td class="text-secondary text-truncate my-recipes__description">${escapeHtml(truncateText(recipe.description, 120))}</td>
-          <td>${recipe.commentCount}</td>
-          <td>${formatAverageRating(recipe.avgRating)}</td>
           <td>
             <div class="d-flex flex-wrap gap-2">
               <a class="btn btn-outline-secondary btn-sm" href="/pages/recipe-details.html?id=${recipe.id}">${icon('bi-eye-fill', 'me-2')}View Recipe</a>

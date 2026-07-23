@@ -4,9 +4,33 @@ function getRecipeErrorMessage(error) {
   return error?.message ?? 'An unexpected recipes error occurred.';
 }
 
+function normalizeTagName(value) {
+  return String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function normalizeTag(tag) {
+  if (!tag) {
+    return null;
+  }
+
+  return {
+    id: tag.id,
+    name: tag.name,
+  };
+}
+
+function normalizeTags(recipe) {
+  const rawTags = recipe.tags ?? recipe.recipe_tags ?? [];
+
+  return rawTags
+    .map((tag) => normalizeTag(tag?.tag ?? tag))
+    .filter(Boolean);
+}
+
 function normalizeRecipe(recipe) {
   const category = recipe.category ?? null;
   const author = recipe.author ?? null;
+  const authorName = author?.display_name?.trim() || 'Unknown author';
 
   return {
     id: recipe.id,
@@ -17,47 +41,48 @@ function normalizeRecipe(recipe) {
     imageUrl: recipe.image_url,
     categoryId: recipe.category_id,
     categoryName: category?.name ?? 'Uncategorized',
-    authorEmail: author?.email ?? '',
     authorAvatarUrl: author?.avatar_url ?? null,
-    authorName: author?.email
-      ? author.email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase())
-      : 'Unknown author',
+    authorName,
+    tags: normalizeTags(recipe),
     href: `/pages/recipe-details.html?id=${recipe.id}`,
   };
 }
 
-function computeCommentStats(comments = []) {
-  const count = comments.length;
-
-  if (count === 0) {
-    return { commentCount: 0, avgRating: null };
+async function attachTagsToRecipes(recipes) {
+  if (!recipes.length) {
+    return [];
   }
 
-  const sum = comments.reduce((total, comment) => total + Number(comment.rating ?? 0), 0);
+  const supabase = getSupabaseClient();
+  const recipeIds = recipes.map((recipe) => recipe.id);
 
-  return {
-    commentCount: count,
-    avgRating: sum / count,
-  };
-}
+  const { data, error } = await supabase
+    .from('recipe_tags')
+    .select('recipe_id, tag:tags(id, name)')
+    .in('recipe_id', recipeIds);
 
-function attachCommentStats(recipes, comments) {
-  const commentsByRecipeId = new Map();
+  if (error) {
+    throw new Error(getRecipeErrorMessage(error));
+  }
 
-  comments.forEach((comment) => {
-    const existing = commentsByRecipeId.get(comment.recipe_id) ?? [];
-    existing.push(comment);
-    commentsByRecipeId.set(comment.recipe_id, existing);
+  const tagsByRecipeId = new Map(recipeIds.map((id) => [id, []]));
+
+  data.forEach((row) => {
+    const tag = normalizeTag(row.tag);
+
+    if (!tag) {
+      return;
+    }
+
+    const existingTags = tagsByRecipeId.get(row.recipe_id) ?? [];
+    existingTags.push(tag);
+    tagsByRecipeId.set(row.recipe_id, existingTags);
   });
 
-  return recipes.map((recipe) => {
-    const stats = computeCommentStats(commentsByRecipeId.get(recipe.id) ?? []);
-
-    return {
-      ...recipe,
-      ...stats,
-    };
-  });
+  return recipes.map((recipe) => ({
+    ...normalizeRecipe(recipe),
+    tags: tagsByRecipeId.get(recipe.id) ?? [],
+  }));
 }
 
 /**
@@ -92,7 +117,7 @@ export async function listDashboardRecipes() {
       image_url,
       category_id,
       category:categories(id, name),
-      author:profiles!recipes_owner_profile_fkey(id, email, avatar_url)
+      author:profiles!recipes_owner_profile_fkey(id, display_name, avatar_url)
     `)
     .order('created_at', { ascending: false });
 
@@ -100,11 +125,11 @@ export async function listDashboardRecipes() {
     throw new Error(getRecipeErrorMessage(error));
   }
 
-  return data.map(normalizeRecipe);
+  return attachTagsToRecipes(data);
 }
 
 /**
- * Fetch recipes owned by the current user along with comment counts and average ratings.
+ * Fetch recipes owned by the current user.
  * @param {string} ownerId
  */
 export async function listMyRecipes(ownerId) {
@@ -121,7 +146,7 @@ export async function listMyRecipes(ownerId) {
       image_url,
       category_id,
       category:categories(id, name),
-      author:profiles!recipes_owner_profile_fkey(id, email, avatar_url)
+      author:profiles!recipes_owner_profile_fkey(id, display_name, avatar_url)
     `)
     .eq('owner_id', ownerId)
     .order('created_at', { ascending: false });
@@ -134,17 +159,7 @@ export async function listMyRecipes(ownerId) {
     return [];
   }
 
-  const recipeIds = recipes.map((recipe) => recipe.id);
-  const { data: comments, error: commentsError } = await supabase
-    .from('comments')
-    .select('recipe_id, rating')
-    .in('recipe_id', recipeIds);
-
-  if (commentsError) {
-    throw new Error(getRecipeErrorMessage(commentsError));
-  }
-
-  return attachCommentStats(recipes.map(normalizeRecipe), comments);
+  return attachTagsToRecipes(recipes);
 }
 
 /**
@@ -172,7 +187,7 @@ export async function getRecipeById(recipeId) {
       image_url,
       category_id,
       category:categories(id, name),
-      author:profiles!recipes_owner_profile_fkey(id, email, avatar_url)
+      author:profiles!recipes_owner_profile_fkey(id, display_name, avatar_url)
     `)
     .eq('id', recipeId)
     .single();
@@ -181,41 +196,188 @@ export async function getRecipeById(recipeId) {
     throw new Error(getRecipeErrorMessage(error));
   }
 
-  return normalizeRecipe(data);
+  const recipe = normalizeRecipe(data);
+  recipe.tags = await getRecipeTags(recipeId);
+  return recipe;
 }
 
 /**
- * Fetch comments for a given recipe.
- * @param {string} recipeId
+ * Fetch all tags.
  */
-export async function listRecipeComments(recipeId) {
+export async function listTags() {
   const supabase = getSupabaseClient();
 
   const { data, error } = await supabase
-    .from('comments')
-    .select(`
-      id,
-      content,
-      rating,
-      created_at,
-      author:profiles!comments_author_id_fkey(id, display_name, avatar_url, email)
-    `)
-    .eq('recipe_id', recipeId)
-    .order('created_at', { ascending: false });
+    .from('tags')
+    .select('id, name')
+    .order('name', { ascending: true });
 
   if (error) {
     throw new Error(getRecipeErrorMessage(error));
   }
 
-  return data.map((comment) => ({
-    id: comment.id,
-    content: comment.content,
-    rating: comment.rating,
-    createdAt: comment.created_at,
-    authorName: comment.author?.display_name || comment.author?.email || 'Anonymous',
-    authorAvatarUrl: comment.author?.avatar_url ?? null,
-  }));
+  return data.map(normalizeTag);
 }
+
+/**
+ * Fetch tags for a single recipe.
+ * @param {string | number} recipeId
+ */
+export async function getRecipeTags(recipeId) {
+  const supabase = getSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('recipe_tags')
+    .select('tag:tags(id, name)')
+    .eq('recipe_id', recipeId);
+
+  if (error) {
+    throw new Error(getRecipeErrorMessage(error));
+  }
+
+  return data.map((row) => normalizeTag(row.tag)).filter(Boolean);
+}
+
+/**
+ * Add a tag to a recipe.
+ * @param {string | number} recipeId
+ * @param {string | number} tagId
+ */
+export async function attachTagToRecipe(recipeId, tagId) {
+  const supabase = getSupabaseClient();
+
+  const { error } = await supabase.from('recipe_tags').upsert(
+    {
+      recipe_id: recipeId,
+      tag_id: tagId,
+    },
+    {
+      onConflict: 'recipe_id,tag_id',
+      ignoreDuplicates: true,
+    },
+  );
+
+  if (error) {
+    throw new Error(getRecipeErrorMessage(error));
+  }
+}
+
+/**
+ * Remove a tag from a recipe.
+ * @param {string | number} recipeId
+ * @param {string | number} tagId
+ */
+export async function detachTagFromRecipe(recipeId, tagId) {
+  const supabase = getSupabaseClient();
+
+  const { error } = await supabase.from('recipe_tags').delete().match({
+    recipe_id: recipeId,
+    tag_id: tagId,
+  });
+
+  if (error) {
+    throw new Error(getRecipeErrorMessage(error));
+  }
+}
+
+async function ensureTagExists(tagName) {
+  const normalizedName = normalizeTagName(tagName);
+
+  if (!normalizedName) {
+    return null;
+  }
+
+  const supabase = getSupabaseClient();
+  const { data: existingTag, error: selectError } = await supabase
+    .from('tags')
+    .select('id, name')
+    .eq('name', normalizedName)
+    .maybeSingle();
+
+  if (selectError) {
+    throw new Error(getRecipeErrorMessage(selectError));
+  }
+
+  if (existingTag) {
+    return normalizeTag(existingTag);
+  }
+
+  const { data, error } = await supabase
+    .from('tags')
+    .insert({ name: normalizedName })
+    .select('id, name')
+    .single();
+
+  if (error) {
+    const { data: fallbackTag, error: fallbackError } = await supabase
+      .from('tags')
+      .select('id, name')
+      .eq('name', normalizedName)
+      .maybeSingle();
+
+    if (fallbackError) {
+      throw new Error(getRecipeErrorMessage(fallbackError));
+    }
+
+    if (fallbackTag) {
+      return normalizeTag(fallbackTag);
+    }
+
+    throw new Error(getRecipeErrorMessage(error));
+  }
+
+  return normalizeTag(data);
+}
+
+/**
+ * Replace a recipe's tags with the provided tag names.
+ * @param {string | number} recipeId
+ * @param {string[]} tagNames
+ */
+export async function setRecipeTags(recipeId, tagNames) {
+  const desiredNames = [...new Set((tagNames ?? []).map(normalizeTagName).filter(Boolean))];
+  const desiredTags = [];
+
+  for (const tagName of desiredNames) {
+    const tag = await ensureTagExists(tagName);
+
+    if (tag) {
+      desiredTags.push(tag);
+    }
+  }
+
+  const currentTags = await getRecipeTags(recipeId);
+  const currentTagIds = new Set(currentTags.map((tag) => String(tag.id)));
+  const desiredTagIds = new Set(desiredTags.map((tag) => String(tag.id)));
+
+  await Promise.all(
+    desiredTags
+      .filter((tag) => !currentTagIds.has(String(tag.id)))
+      .map((tag) => attachTagToRecipe(recipeId, tag.id)),
+  );
+
+  await Promise.all(
+    currentTags
+      .filter((tag) => !desiredTagIds.has(String(tag.id)))
+      .map((tag) => detachTagFromRecipe(recipeId, tag.id)),
+  );
+
+  return desiredTags;
+}
+
+/**
+ * Filter a recipe list by tag id.
+ * @param {Array<object>} recipes
+ * @param {string | number | null} tagId
+ */
+export function filterRecipesByTag(recipes, tagId) {
+  if (!tagId || tagId === 'all') {
+    return recipes;
+  }
+
+  return recipes.filter((recipe) => (recipe.tags ?? []).some((tag) => String(tag.id) === String(tagId)));
+}
+
 
 /**
  * Create a new recipe owned by the current user.

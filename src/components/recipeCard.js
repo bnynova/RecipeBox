@@ -1,6 +1,8 @@
 import { escapeHtml } from '../utils/helpers.js';
 import { icon } from './icons.js';
 
+const FALLBACK_IMAGE_URL = '/images/dish-illustration.svg';
+
 /**
  * Render a Bootstrap recipe card for browse and featured recipe sections.
  * @param {object} recipe
@@ -15,18 +17,22 @@ export function createRecipeCard(recipe) {
   const safeCategory = escapeHtml(recipe.categoryName ?? 'Uncategorized');
   const safeAuthor = escapeHtml(recipe.authorName ?? 'Unknown author');
   const safeDescription = escapeHtml(recipe.excerpt ?? recipe.description ?? '');
-  const imageMarkup = recipe.imageUrl
-    ? `<img src="${recipe.imageUrl}" class="card-img-top recipe-card__image" alt="${safeTitle}">`
-    : `<div class="recipe-card__placeholder"></div>`;
+  const tagsMarkup = (recipe.tags ?? []).length
+    ? `<div class="d-flex flex-wrap gap-1">${(recipe.tags ?? [])
+        .map((tag) => `<span class="badge rounded-pill text-bg-light border text-uppercase fw-semibold">${escapeHtml(tag.name)}</span>`)
+        .join('')}</div>`
+    : '';
+  const imageSrc = recipe.imageUrl || FALLBACK_IMAGE_URL;
 
   return `
     <a class="card recipe-card h-100 shadow-sm text-decoration-none text-reset" href="${recipe.href ?? (recipe.id ? `/pages/recipe-details.html?id=${recipe.id}` : '/pages/recipe-details.html')}">
-      ${imageMarkup}
+      <img src="${imageSrc}" class="card-img-top recipe-card__image" alt="${safeTitle}" loading="lazy" onerror="this.onerror=null;this.src='${FALLBACK_IMAGE_URL}';">
       <div class="card-body d-flex flex-column gap-2">
         <div class="d-flex justify-content-between align-items-start gap-2">
           <span class="badge text-bg-light border text-uppercase fw-semibold">${icon('bi-tag-fill', 'me-1')}<span>${safeCategory}</span></span>
         </div>
         <h3 class="h5 card-title mb-0">${safeTitle}</h3>
+        ${tagsMarkup}
         <p class="card-text text-secondary mb-0">${safeDescription}</p>
         <p class="small text-secondary mb-0 mt-auto">By ${safeAuthor}</p>
       </div>

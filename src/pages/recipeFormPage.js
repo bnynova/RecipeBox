@@ -1,7 +1,8 @@
 import { showToast } from '../components/toasts.js';
 import { getCurrentUser } from '../services/authService.js';
-import { createRecipe, getRecipeById, listCategories, updateRecipe } from '../services/recipesService.js';
+import { createRecipe, deleteRecipe, getRecipeById, listCategories, listTags, setRecipeTags, updateRecipe } from '../services/recipesService.js';
 import { deleteRecipeImageByUrl, uploadRecipeImage } from '../services/storageService.js';
+import { escapeHtml } from '../utils/helpers.js';
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 const FLASH_TOAST_KEY = 'recipebox:flash-toast';
@@ -31,6 +32,10 @@ function splitList(value) {
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
+}
+
+function normalizeTagName(value) {
+  return String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
 }
 
 function setFlashToast(message, variant = 'success') {
@@ -93,6 +98,60 @@ function clearInvalidStates(form) {
   ['title', 'description', 'categoryId', 'imageFile', 'ingredients', 'steps'].forEach((fieldName) => {
     setFormInvalidState(form, fieldName, false);
   });
+}
+
+function renderTagSuggestions(root, tags) {
+  const datalist = root.querySelector('[data-tag-options]');
+
+  if (!datalist) {
+    return;
+  }
+
+  datalist.innerHTML = tags.map((tag) => `<option value="${escapeHtml(tag.name)}"></option>`).join('');
+}
+
+function renderSelectedTags(root, tagState) {
+  const container = root.querySelector('[data-selected-tags]');
+
+  if (!container) {
+    return;
+  }
+
+  if (tagState.selectedTags.length === 0) {
+    container.innerHTML = '<span class="text-secondary small">No tags selected yet.</span>';
+    return;
+  }
+
+  container.innerHTML = tagState.selectedTags
+    .map(
+      (tagName) => `
+        <span class="badge rounded-pill text-bg-secondary d-inline-flex align-items-center gap-2 px-3 py-2">
+          <span>${escapeHtml(tagName)}</span>
+          <button class="btn btn-sm btn-link text-white p-0 lh-1 text-decoration-none" type="button" data-remove-tag="${escapeHtml(tagName)}" aria-label="Remove ${escapeHtml(tagName)} tag">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+          </button>
+        </span>
+      `,
+    )
+    .join('');
+}
+
+function addTagToState(root, tagState, rawValue) {
+  const tagName = normalizeTagName(rawValue);
+
+  if (!tagName || tagState.selectedTags.includes(tagName)) {
+    return;
+  }
+
+  tagState.selectedTags = [...tagState.selectedTags, tagName];
+  renderSelectedTags(root, tagState);
+}
+
+function removeTagFromState(root, tagState, tagName) {
+  const normalizedTagName = normalizeTagName(tagName);
+
+  tagState.selectedTags = tagState.selectedTags.filter((item) => item !== normalizedTagName);
+  renderSelectedTags(root, tagState);
 }
 
 function setPreviewSurface(root, url, altText = '') {
@@ -195,7 +254,7 @@ function setSelectOptions(root, categories) {
   select.innerHTML = ['<option value="">Select a category</option>', ...categories.map((category) => `<option value="${category.id}">${category.name}</option>`)].join('');
 }
 
-function fillForm(root, recipe, previewState) {
+function fillForm(root, recipe, previewState, tagState) {
   root.querySelector('[name="title"]').value = recipe.title ?? '';
   root.querySelector('[name="description"]').value = recipe.description ?? '';
   root.querySelector('[name="categoryId"]').value = recipe.categoryId ?? '';
@@ -203,6 +262,8 @@ function fillForm(root, recipe, previewState) {
   root.querySelector('[name="steps"]').value = recipe.steps ?? '';
   previewState.currentImageUrl = recipe.imageUrl ?? '';
   previewState.currentImagePath = recipe.imageUrl ?? '';
+  tagState.selectedTags = (recipe.tags ?? []).map((tag) => normalizeTagName(tag.name)).filter(Boolean);
+  renderSelectedTags(root, tagState);
   showImagePreview(root, previewState, recipe.imageUrl ?? null, true);
 }
 
@@ -277,7 +338,7 @@ function validateForm(root, form, previewState, mode) {
   };
 }
 
-async function submitRecipeForm(root, form, mode, recipeId, previewState) {
+async function submitRecipeForm(root, form, mode, recipeId, previewState, tagState) {
   const submitButton = form.querySelector('[type="submit"]');
   const currentUser = await getCurrentUser().catch(() => null);
 
@@ -316,6 +377,7 @@ async function submitRecipeForm(root, form, mode, recipeId, previewState) {
 
     if (mode === 'edit' && recipeId) {
       await updateRecipe(recipeId, recipePayload);
+      await setRecipeTags(recipeId, tagState.selectedTags);
 
       if (uploadedImage && existingImageUrl && existingImageUrl !== imageUrl) {
         await deleteRecipeImageByUrl(existingImageUrl).catch(() => null);
@@ -326,7 +388,15 @@ async function submitRecipeForm(root, form, mode, recipeId, previewState) {
       return;
     }
 
-    await createRecipe(recipePayload);
+    const createdRecipe = await createRecipe(recipePayload);
+
+    try {
+      await setRecipeTags(createdRecipe.id, tagState.selectedTags);
+    } catch (tagError) {
+      await deleteRecipe(createdRecipe.id).catch(() => null);
+      throw tagError;
+    }
+
     setFlashToast('Recipe created.');
     window.location.assign('/my-recipes');
   } catch (error) {
@@ -342,7 +412,7 @@ async function submitRecipeForm(root, form, mode, recipeId, previewState) {
   }
 }
 
-async function handleSubmit(root, event, mode, recipeId, previewState) {
+async function handleSubmit(root, event, mode, recipeId, previewState, tagState) {
   event.preventDefault();
   event.stopPropagation();
   const form = event.currentTarget;
@@ -351,10 +421,10 @@ async function handleSubmit(root, event, mode, recipeId, previewState) {
     return;
   }
 
-  await submitRecipeForm(root, form, mode, recipeId, previewState);
+  await submitRecipeForm(root, form, mode, recipeId, previewState, tagState);
 }
 
-async function handleSaveButtonClick(root, event, mode, recipeId, previewState) {
+async function handleSaveButtonClick(root, event, mode, recipeId, previewState, tagState) {
   event.preventDefault();
   event.stopPropagation();
 
@@ -363,7 +433,7 @@ async function handleSaveButtonClick(root, event, mode, recipeId, previewState) 
     return;
   }
 
-  await submitRecipeForm(root, form, mode, recipeId, previewState);
+  await submitRecipeForm(root, form, mode, recipeId, previewState, tagState);
 }
 
 /**
@@ -378,9 +448,15 @@ export async function setupRecipeFormPage(root) {
   const form = root.querySelector('form');
   const saveButton = root.querySelector('[type="submit"]');
   const imageInput = root.querySelector('[name="imageFile"]');
+  const tagInput = root.querySelector('[data-tag-input]');
+  const addTagButton = root.querySelector('[data-add-tag]');
   const previewState = {
     currentImageUrl: '',
     objectUrl: null,
+  };
+  const tagState = {
+    selectedTags: [],
+    availableTags: [],
   };
 
   const flashToast = takeFlashToast();
@@ -393,15 +469,52 @@ export async function setupRecipeFormPage(root) {
 
   if (form instanceof HTMLFormElement) {
     form.addEventListener('submit', (event) => {
-      void handleSubmit(root, event, mode, recipeId, previewState);
+      void handleSubmit(root, event, mode, recipeId, previewState, tagState);
     });
   }
 
   if (saveButton instanceof HTMLButtonElement) {
     saveButton.addEventListener('click', (event) => {
-      void handleSaveButtonClick(root, event, mode, recipeId, previewState);
+      void handleSaveButtonClick(root, event, mode, recipeId, previewState, tagState);
     });
   }
+
+  if (tagInput instanceof HTMLInputElement) {
+    tagInput.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') {
+        return;
+      }
+
+      event.preventDefault();
+      addTagToState(root, tagState, tagInput.value);
+      tagInput.value = '';
+    });
+  }
+
+  addTagButton?.addEventListener('click', () => {
+    if (!(tagInput instanceof HTMLInputElement)) {
+      return;
+    }
+
+    addTagToState(root, tagState, tagInput.value);
+    tagInput.value = '';
+    tagInput.focus();
+  });
+
+  root.addEventListener('click', (event) => {
+    const target = event.target;
+
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    const removeButton = target.closest('[data-remove-tag]');
+    if (!removeButton) {
+      return;
+    }
+
+    removeTagFromState(root, tagState, removeButton.getAttribute('data-remove-tag'));
+  });
 
   if (imageInput instanceof HTMLInputElement) {
     const syncImageSelection = () => {
@@ -420,12 +533,14 @@ export async function setupRecipeFormPage(root) {
   }
 
   try {
-    const categories = await listCategories();
+    const [categories, tags] = await Promise.all([listCategories(), listTags()]);
     setSelectOptions(root, categories);
+    tagState.availableTags = tags;
+    renderTagSuggestions(root, tags);
 
     if (mode === 'edit' && recipeId) {
       const recipe = await getRecipeById(recipeId);
-      fillForm(root, recipe, previewState);
+      fillForm(root, recipe, previewState, tagState);
     } else {
       if (!previewState.objectUrl && !previewState.currentImageUrl) {
         showImagePreview(root, previewState, null);
