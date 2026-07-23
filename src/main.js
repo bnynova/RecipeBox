@@ -10,6 +10,7 @@ import { setupRecipesPage } from './pages/recipesPage.js';
 import { setupDashboardPage } from './pages/dashboardPage.js';
 import { setupAuthPage } from './pages/authPage.js';
 import { setupProfilePage } from './pages/profilePage.js';
+import { setupAdminPage } from './pages/adminPage.js';
 import { setupRecipeDetailsPage } from './pages/recipeDetailsPage.js';
 import { setupMyRecipesPage } from './pages/myRecipesPage.js';
 import { setupRecipeFormPage } from './pages/recipeFormPage.js';
@@ -89,7 +90,7 @@ async function bootstrap() {
   const session = await getCurrentSession().catch(() => null);
   const isAuthenticated = Boolean(session?.user);
 
-  if ((activePage === 'dashboard' || activePage === 'my-recipes' || activePage === 'recipe-add' || activePage === 'recipe-edit' || activePage === 'profile') && !isAuthenticated) {
+  if ((activePage === 'dashboard' || activePage === 'my-recipes' || activePage === 'recipe-add' || activePage === 'recipe-edit' || activePage === 'profile' || activePage === 'admin') && !isAuthenticated) {
     window.location.assign('/login');
     return;
   }
@@ -125,6 +126,10 @@ async function bootstrap() {
 
   if (activePage === 'profile') {
     void setupProfilePage(document);
+  }
+
+  if (activePage === 'admin') {
+    void setupAdminPage(document);
   }
 
   if (activePage === 'my-recipes') {

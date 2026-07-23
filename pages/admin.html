@@ -10,35 +10,74 @@
     <main class="page-shell">
       <div class="container">
         <section class="page-panel mb-4">
-          <p class="soft-label mb-2">Admin tools</p>
-          <h1 class="h3 mb-3">Dashboard placeholder</h1>
-          <p class="text-secondary mb-0">This page is reserved for admin-only moderation and management features.</p>
+          <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
+            <div>
+              <p class="soft-label mb-2">Admin tools</p>
+              <h1 class="h3 mb-3" data-admin-page-title>Admin panel</h1>
+              <p class="text-secondary mb-0" data-admin-page-description>
+                Super admins can review every recipe in the system. Other users see only their own recipes.
+              </p>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge rounded-pill text-bg-light border text-uppercase fw-semibold" data-admin-role-badge>View</span>
+              <a class="btn btn-primary" href="/recipe/add" data-admin-add-button><i class="bi bi-plus-circle-fill me-2" aria-hidden="true"></i>Add Recipe</a>
+            </div>
+          </div>
         </section>
 
-        <section class="page-panel">
-          <div class="row g-3">
-            <div class="col-md-4">
-              <div class="border rounded-4 p-3 bg-white h-100">
-                <p class="soft-label mb-1">Users</p>
-                <h2 class="h5 mb-0">Manage profiles</h2>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="border rounded-4 p-3 bg-white h-100">
-                <p class="soft-label mb-1">Recipes</p>
-                <h2 class="h5 mb-0">Review submissions</h2>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="border rounded-4 p-3 bg-white h-100">
-                <p class="soft-label mb-1">Categories</p>
-                <h2 class="h5 mb-0">Organize content</h2>
-              </div>
-            </div>
+        <section class="page-panel mb-4 d-none" data-admin-loading>
+          <div class="d-flex align-items-center justify-content-center gap-3 py-5">
+            <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
+            <span class="fw-semibold">Loading recipes...</span>
+          </div>
+        </section>
+
+        <section class="page-panel mb-4 d-none" data-admin-empty>
+          <div class="text-center py-5">
+            <i class="bi bi-inbox-fill display-6 text-secondary mb-3" aria-hidden="true"></i>
+            <h2 class="h4 mb-2">No recipes found</h2>
+            <p class="text-secondary mb-3" data-empty-message>No recipes found</p>
+            <a class="btn btn-primary" href="/recipe/add"><i class="bi bi-plus-circle-fill me-2" aria-hidden="true"></i>Create recipe</a>
+          </div>
+        </section>
+
+        <section class="page-panel d-none" data-admin-table-wrap>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0 my-recipes__table">
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Tags</th>
+                  <th scope="col" data-admin-owner-column>Owner</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody data-admin-tbody></tbody>
+            </table>
           </div>
         </section>
       </div>
     </main>
+
+    <div class="modal fade" tabindex="-1" id="deleteRecipeModal" data-delete-modal>
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title h5">Delete recipe</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-0">Are you sure you want to delete <strong data-delete-modal-title>this recipe</strong>?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" data-confirm-delete>Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div data-footer-root></div>
     <script type="module" src="../src/main.js"></script>
   </body>

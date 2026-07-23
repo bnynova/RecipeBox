@@ -13,6 +13,7 @@ const AUTH_NAV_ITEMS = [
   { key: 'contacts', label: 'Contacts', href: '/contacts', requiresAuth: true },
   { key: 'my-recipes', label: 'My Recipes', href: '/my-recipes/index.html', requiresAuth: true },
   { key: 'profile', label: 'Profile', href: '/profile', requiresAuth: true },
+  { key: 'admin', label: 'Admin', href: '/admin', requiresAuth: true, requiresRole: 'super_admin' },
 ];
 
 function getInitials(value) {
@@ -60,10 +61,10 @@ export function createNavbar({
   const navItems = getNavItems(isAuthenticated)
     .filter((item) => (!item.requiresAuth || isAuthenticated) && (!item.requiresRole || item.requiresRole === role))
     .filter((item) => isAuthenticated || ['home', 'recipes', 'contacts'].includes(item.key))
-    .filter((item) => !isAuthenticated || ['home', 'recipes', 'contacts', 'my-recipes', 'profile'].includes(item.key));
+    .filter((item) => !isAuthenticated || ['home', 'recipes', 'contacts', 'my-recipes', 'profile', 'admin'].includes(item.key));
 
   const leftNavItems = navItems.filter((item) => ['home', 'recipes', 'contacts'].includes(item.key));
-  const rightNavItems = navItems.filter((item) => ['my-recipes', 'profile'].includes(item.key));
+  const rightNavItems = navItems.filter((item) => ['my-recipes', 'profile', 'admin'].includes(item.key));
 
   const safeDisplayName = escapeHtml(displayName);
 
@@ -76,6 +77,7 @@ export function createNavbar({
         contacts: 'bi-envelope-paper-fill',
         'my-recipes': 'bi-card-checklist',
         profile: 'bi-person-circle',
+        admin: 'bi-shield-lock-fill',
       };
 
       return `

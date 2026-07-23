@@ -29,6 +29,8 @@ export default defineConfig({
             req.url = '/login.html';
           } else if (req.url === '/dashboard') {
             req.url = '/dashboard.html';
+          } else if (req.url === '/admin') {
+            req.url = '/pages/admin.html';
           } else if (req.url === '/recipes') {
             req.url = '/recipes.html';
           } else if (req.url === '/contacts') {
@@ -60,6 +62,8 @@ export default defineConfig({
             req.url = '/login.html';
           } else if (req.url === '/dashboard') {
             req.url = '/dashboard.html';
+          } else if (req.url === '/admin') {
+            req.url = '/pages/admin.html';
           } else if (req.url === '/recipes') {
             req.url = '/recipes.html';
           } else if (req.url === '/contacts') {
