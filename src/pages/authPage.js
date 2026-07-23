@@ -20,6 +20,10 @@ function setActiveMode(root, mode) {
   }
 }
 
+function getAuthModeFromHash() {
+  return window.location.hash === '#register' ? 'register' : 'login';
+}
+
 async function handleRegister(root, event) {
   event.preventDefault();
 
@@ -75,18 +79,23 @@ export function setupAuthPage(root) {
     return;
   }
 
-  const initialMode = window.location.hash === '#register' ? 'register' : 'login';
-  setActiveMode(root, initialMode);
+  const syncMode = () => {
+    setActiveMode(root, getAuthModeFromHash());
+  };
+
+  syncMode();
 
   root.querySelector('[data-auth-tab="login"]')?.addEventListener('click', () => {
-    window.location.hash = 'login';
-    setActiveMode(root, 'login');
+    window.location.hash = '#login';
+    syncMode();
   });
 
   root.querySelector('[data-auth-tab="register"]')?.addEventListener('click', () => {
-    window.location.hash = 'register';
-    setActiveMode(root, 'register');
+    window.location.hash = '#register';
+    syncMode();
   });
+
+  window.addEventListener('hashchange', syncMode);
 
   root.querySelector('[data-auth-panel="login"] form')?.addEventListener('submit', (event) => {
     void handleLogin(root, event);

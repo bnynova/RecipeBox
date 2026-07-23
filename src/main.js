@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import { createFooter } from './components/footer.js';
 import { createNavbar } from './components/navbar.js';
@@ -93,7 +94,7 @@ async function bootstrap() {
     return;
   }
 
-  if ((activePage === 'home' || activePage === 'login') && isAuthenticated) {
+  if (activePage === 'login' && isAuthenticated) {
     window.location.assign('/dashboard');
     return;
   }

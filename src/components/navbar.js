@@ -1,4 +1,5 @@
 import { escapeHtml } from '../utils/helpers.js';
+import { icon } from './icons.js';
 
 const GUEST_NAV_ITEMS = [
   { key: 'home', label: 'Home', href: '/' },
@@ -7,7 +8,7 @@ const GUEST_NAV_ITEMS = [
 ];
 
 const AUTH_NAV_ITEMS = [
-  { key: 'home', label: 'Home', href: '/dashboard', requiresAuth: true },
+  { key: 'home', label: 'Home', href: '/', requiresAuth: true },
   { key: 'recipes', label: 'Recipes', href: '/recipes', requiresAuth: true },
   { key: 'contacts', label: 'Contacts', href: '/contacts', requiresAuth: true },
   { key: 'my-recipes', label: 'My Recipes', href: '/my-recipes/index.html', requiresAuth: true },
@@ -69,11 +70,18 @@ export function createNavbar({
   const renderNavList = (items) => items
     .map((item) => {
       const activeClass = isActiveNavItem(item, activePage) ? ' active' : '';
+      const iconMap = {
+        home: 'bi-house-door-fill',
+        recipes: 'bi-journal-bookmark-fill',
+        contacts: 'bi-envelope-paper-fill',
+        'my-recipes': 'bi-card-checklist',
+        profile: 'bi-person-circle',
+      };
 
       return `
         <li class="nav-item">
           <a class="nav-link${activeClass}" ${item.key === activePage ? 'aria-current="page"' : ''} href="${item.href}">
-            ${item.label}
+            ${icon(iconMap[item.key] ?? 'bi-dot', 'me-2')}<span>${item.label}</span>
           </a>
         </li>
       `;
@@ -90,17 +98,17 @@ export function createNavbar({
           <span class="fw-semibold small d-none d-lg-inline">${safeDisplayName}</span>
         </div>
         <ul class="navbar-nav flex-row flex-wrap gap-lg-2 mb-2 mb-lg-0">${renderNavList(rightNavItems)}</ul>
-        <button class="btn btn-outline-light" type="button" data-auth-action="logout">Logout</button>
+        <button class="btn btn-outline-light" type="button" data-auth-action="logout">${icon('bi-box-arrow-right', 'me-2')}Logout</button>
       </div>
     `
-    : '<div class="d-flex flex-column flex-lg-row gap-2 ms-lg-3"><a class="btn btn-outline-light" href="/login#register">Register</a><a class="btn btn-light" href="/login#login">Login</a></div>';
+    : `<div class="d-flex flex-column flex-lg-row gap-2 ms-lg-3"><a class="btn btn-outline-light" href="/login#register">${icon('bi-person-plus-fill', 'me-2')}Register</a><a class="btn btn-light" href="/login#login">${icon('bi-box-arrow-in-right', 'me-2')}Login</a></div>`;
 
-  const brandHref = isAuthenticated ? '/dashboard' : '/';
+  const brandHref = '/';
 
   return `
     <nav class="navbar navbar-expand-lg navbar-dark app-navbar">
       <div class="container">
-        <a class="navbar-brand fw-bold text-uppercase" href="${brandHref}">RecipeBox</a>
+        <a class="navbar-brand fw-bold text-uppercase" href="${brandHref}">${icon('bi-egg-fried', 'me-2')}RecipeBox</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#recipeBoxNav" aria-controls="recipeBoxNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>

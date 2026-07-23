@@ -1,4 +1,5 @@
 import { escapeHtml } from '../utils/helpers.js';
+import { icon } from './icons.js';
 
 /**
  * Render a Bootstrap recipe card for browse and featured recipe sections.
@@ -23,7 +24,7 @@ export function createRecipeCard(recipe) {
       ${imageMarkup}
       <div class="card-body d-flex flex-column gap-2">
         <div class="d-flex justify-content-between align-items-start gap-2">
-          <span class="badge text-bg-light border text-uppercase fw-semibold">${safeCategory}</span>
+          <span class="badge text-bg-light border text-uppercase fw-semibold">${icon('bi-tag-fill', 'me-1')}<span>${safeCategory}</span></span>
         </div>
         <h3 class="h5 card-title mb-0">${safeTitle}</h3>
         <p class="card-text text-secondary mb-0">${safeDescription}</p>

@@ -84,11 +84,15 @@ function validateAvatarFile(file) {
   }
 }
 
-function setLoadingState(root, message) {
+function setLoadingState(root, isLoading, message) {
+  const loading = root.querySelector('[data-profile-loading]');
   const status = root.querySelector('[data-profile-status]');
+
+  loading?.classList.toggle('d-none', !isLoading);
 
   if (status) {
     status.textContent = message;
+    status.classList.toggle('d-none', isLoading);
   }
 }
 
@@ -158,7 +162,7 @@ export async function setupProfilePage(root) {
   }
 
   try {
-    setLoadingState(root, 'Loading profile...');
+    setLoadingState(root, true, 'Loading profile...');
     clearFormAlert(root);
 
     const currentUser = await getCurrentUser();
@@ -169,7 +173,7 @@ export async function setupProfilePage(root) {
 
     syncPageLabels(root, profile, currentUser);
     handleAvatarSelection(root, state, null);
-    setLoadingState(root, 'Ready to update your profile');
+    setLoadingState(root, false, 'Ready to update your profile');
 
     avatarInput?.addEventListener('change', () => {
       const file = avatarInput.files?.[0] ?? null;
@@ -246,7 +250,7 @@ export async function setupProfilePage(root) {
       }
     });
   } catch (error) {
-    setLoadingState(root, 'Unable to load profile');
+    setLoadingState(root, false, 'Unable to load profile');
     showFormAlert(root, error.message);
     showToast(error.message, { variant: 'error' });
   }

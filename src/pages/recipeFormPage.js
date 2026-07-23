@@ -16,7 +16,13 @@ function getRecipeIdFromLocation() {
 }
 
 function getModeFromRoot(root) {
-  return root.dataset.recipeFormMode ?? 'add';
+  const rootElement = root instanceof Document ? root.body : root;
+
+  if (!(rootElement instanceof HTMLElement)) {
+    return 'add';
+  }
+
+  return rootElement.dataset.recipeFormMode ?? 'add';
 }
 
 function splitList(value) {
@@ -60,6 +66,7 @@ function showFormAlert(root, message) {
 
   alert.textContent = message;
   alert.classList.remove('d-none');
+  alert.scrollIntoView({ block: 'center', behavior: 'smooth' });
 }
 
 function clearFormAlert(root) {
@@ -88,6 +95,20 @@ function clearInvalidStates(form) {
   });
 }
 
+function setPreviewSurface(root, url, altText = '') {
+  const previewSurface = root.querySelector('[data-recipe-image-preview-surface]');
+  const filenameBadge = root.querySelector('[data-recipe-image-preview-label]');
+
+  if (previewSurface instanceof HTMLElement) {
+    previewSurface.style.backgroundImage = url ? `url("${url}")` : 'none';
+  }
+
+  if (filenameBadge) {
+    filenameBadge.textContent = altText;
+    filenameBadge.classList.toggle('d-none', !altText);
+  }
+}
+
 function showImagePreview(root, previewState, url, isPlaceholder = false) {
   const image = root.querySelector('[data-recipe-image-preview]');
   const placeholder = root.querySelector('[data-recipe-image-preview-empty]');
@@ -105,6 +126,7 @@ function showImagePreview(root, previewState, url, isPlaceholder = false) {
     image.src = url;
     image.classList.remove('d-none');
     placeholder?.classList.add('d-none');
+    setPreviewSurface(root, url, isPlaceholder ? 'Current recipe photo' : '');
 
     if (isPlaceholder) {
       image.alt = 'Current recipe photo';
@@ -115,6 +137,7 @@ function showImagePreview(root, previewState, url, isPlaceholder = false) {
 
   image.classList.add('d-none');
   placeholder?.classList.remove('d-none');
+  setPreviewSurface(root, '');
 }
 
 function handleImageSelection(root, previewState, file) {
@@ -131,10 +154,20 @@ function handleImageSelection(root, previewState, file) {
   if (file) {
     const objectUrl = URL.createObjectURL(file);
     previewState.objectUrl = objectUrl;
+    setPreviewSurface(root, objectUrl, file.name);
+
+    image.onload = () => {
+      image.classList.remove('d-none');
+      root.querySelector('[data-recipe-image-preview-empty]')?.classList.add('d-none');
+    };
+
+    image.onerror = () => {
+      showFormAlert(root, 'Unable to preview the selected image.');
+      setPreviewSurface(root, '');
+    };
+
     image.src = objectUrl;
     image.alt = file.name;
-    image.classList.remove('d-none');
-    root.querySelector('[data-recipe-image-preview-empty]')?.classList.add('d-none');
     return;
   }
 
@@ -244,9 +277,7 @@ function validateForm(root, form, previewState, mode) {
   };
 }
 
-async function handleSubmit(root, event, mode, recipeId, previewState) {
-  event.preventDefault();
-  const form = event.currentTarget;
+async function submitRecipeForm(root, form, mode, recipeId, previewState) {
   const submitButton = form.querySelector('[type="submit"]');
   const currentUser = await getCurrentUser().catch(() => null);
 
@@ -291,23 +322,48 @@ async function handleSubmit(root, event, mode, recipeId, previewState) {
       }
 
       setFlashToast('Recipe updated.');
-      window.location.assign('/my-recipes/index.html');
+      window.location.assign('/my-recipes');
       return;
     }
 
     await createRecipe(recipePayload);
     setFlashToast('Recipe created.');
-    window.location.assign('/my-recipes/index.html');
+    window.location.assign('/my-recipes');
   } catch (error) {
     if (uploadedImage?.publicUrl) {
       await deleteRecipeImageByUrl(uploadedImage.publicUrl).catch(() => null);
     }
 
+    showFormAlert(root, error.message);
     showToast(error.message, { variant: 'error' });
   } finally {
     submitButton.disabled = false;
     submitButton.textContent = mode === 'edit' ? 'Save Recipe' : 'Create Recipe';
   }
+}
+
+async function handleSubmit(root, event, mode, recipeId, previewState) {
+  event.preventDefault();
+  event.stopPropagation();
+  const form = event.currentTarget;
+
+  if (!(form instanceof HTMLFormElement)) {
+    return;
+  }
+
+  await submitRecipeForm(root, form, mode, recipeId, previewState);
+}
+
+async function handleSaveButtonClick(root, event, mode, recipeId, previewState) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const form = root.querySelector('form');
+  if (!form) {
+    return;
+  }
+
+  await submitRecipeForm(root, form, mode, recipeId, previewState);
 }
 
 /**
@@ -319,6 +375,8 @@ export async function setupRecipeFormPage(root) {
   const recipeId = getRecipeIdFromLocation();
   const titleElement = root.querySelector('[data-recipe-form-title]');
   const statusElement = root.querySelector('[data-form-status]');
+  const form = root.querySelector('form');
+  const saveButton = root.querySelector('[type="submit"]');
   const imageInput = root.querySelector('[name="imageFile"]');
   const previewState = {
     currentImageUrl: '',
@@ -333,6 +391,34 @@ export async function setupRecipeFormPage(root) {
   titleElement?.replaceChildren(document.createTextNode(mode === 'edit' ? 'Edit recipe' : 'Create a recipe'));
   renderFormLoading(root, mode === 'edit' ? 'Loading recipe...' : 'Ready to create a recipe');
 
+  if (form instanceof HTMLFormElement) {
+    form.addEventListener('submit', (event) => {
+      void handleSubmit(root, event, mode, recipeId, previewState);
+    });
+  }
+
+  if (saveButton instanceof HTMLButtonElement) {
+    saveButton.addEventListener('click', (event) => {
+      void handleSaveButtonClick(root, event, mode, recipeId, previewState);
+    });
+  }
+
+  if (imageInput instanceof HTMLInputElement) {
+    const syncImageSelection = () => {
+      const file = imageInput.files?.[0] ?? null;
+      imageInput.classList.remove('is-invalid');
+      handleImageSelection(root, previewState, file);
+      imageInput.required = mode === 'add' && !previewState.currentImageUrl && !file;
+    };
+
+    imageInput.addEventListener('change', syncImageSelection);
+    imageInput.addEventListener('input', syncImageSelection);
+
+    if (imageInput.files?.[0]) {
+      handleImageSelection(root, previewState, imageInput.files[0]);
+    }
+  }
+
   try {
     const categories = await listCategories();
     setSelectOptions(root, categories);
@@ -341,7 +427,9 @@ export async function setupRecipeFormPage(root) {
       const recipe = await getRecipeById(recipeId);
       fillForm(root, recipe, previewState);
     } else {
-      showImagePreview(root, previewState, null);
+      if (!previewState.objectUrl && !previewState.currentImageUrl) {
+        showImagePreview(root, previewState, null);
+      }
     }
 
     if (mode === 'edit' && !recipeId) {
@@ -351,12 +439,11 @@ export async function setupRecipeFormPage(root) {
     if (imageInput instanceof HTMLInputElement) {
       imageInput.required = mode === 'add' && !previewState.currentImageUrl;
 
-      imageInput.addEventListener('change', () => {
-        const file = imageInput.files?.[0] ?? null;
-        imageInput.classList.remove('is-invalid');
-        handleImageSelection(root, previewState, file);
-        imageInput.required = mode === 'add' && !previewState.currentImageUrl && !file;
-      });
+      if (imageInput.files?.[0]) {
+        handleImageSelection(root, previewState, imageInput.files[0]);
+      } else if (mode === 'add' && !previewState.currentImageUrl && !previewState.objectUrl) {
+        showImagePreview(root, previewState, null);
+      }
     }
 
     statusElement?.classList.add('d-none');
@@ -364,8 +451,4 @@ export async function setupRecipeFormPage(root) {
     showToast(error.message, { variant: 'error' });
     renderFormLoading(root, 'Unable to load recipe form');
   }
-
-  root.querySelector('form')?.addEventListener('submit', (event) => {
-    void handleSubmit(root, event, mode, recipeId, previewState);
-  });
 }

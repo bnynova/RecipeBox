@@ -5,6 +5,7 @@ import { deleteRecipe, listMyRecipes } from '../services/recipesService.js';
 import { escapeHtml, truncateText } from '../utils/helpers.js';
 import { getCurrentUser } from '../services/authService.js';
 import { deleteRecipeImageByUrl } from '../services/storageService.js';
+import { icon, renderRatingStars } from '../components/icons.js';
 
 const FLASH_TOAST_KEY = 'recipebox:flash-toast';
 
@@ -26,10 +27,10 @@ function takeFlashToast() {
 
 function formatAverageRating(value) {
   if (value === null || value === undefined) {
-    return '—';
+    return renderRatingStars(null, { muted: true });
   }
 
-  return value.toFixed(1);
+  return renderRatingStars(value, { showValue: true });
 }
 
 function renderLoading(root) {
@@ -65,9 +66,9 @@ function renderTable(root, recipes) {
           <td>${formatAverageRating(recipe.avgRating)}</td>
           <td>
             <div class="d-flex flex-wrap gap-2">
-              <a class="btn btn-outline-secondary btn-sm" href="/pages/recipe-details.html?id=${recipe.id}">View Recipe</a>
-              <a class="btn btn-outline-primary btn-sm" href="/recipe-edit.html?id=${recipe.id}">Edit</a>
-              <button class="btn btn-outline-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteRecipeModal" data-delete-recipe-id="${recipe.id}" data-delete-recipe-title="${escapeHtml(recipe.title)}" data-delete-recipe-image-url="${escapeHtml(recipe.imageUrl ?? '')}">Delete</button>
+              <a class="btn btn-outline-secondary btn-sm" href="/pages/recipe-details.html?id=${recipe.id}">${icon('bi-eye-fill', 'me-2')}View Recipe</a>
+              <a class="btn btn-outline-primary btn-sm" href="/recipe-edit.html?id=${recipe.id}">${icon('bi-pencil-square', 'me-2')}Edit</a>
+              <button class="btn btn-outline-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteRecipeModal" data-delete-recipe-id="${recipe.id}" data-delete-recipe-title="${escapeHtml(recipe.title)}" data-delete-recipe-image-url="${escapeHtml(recipe.imageUrl ?? '')}">${icon('bi-trash3-fill', 'me-2')}Delete</button>
             </div>
           </td>
         </tr>

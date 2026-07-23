@@ -185,6 +185,39 @@ export async function getRecipeById(recipeId) {
 }
 
 /**
+ * Fetch comments for a given recipe.
+ * @param {string} recipeId
+ */
+export async function listRecipeComments(recipeId) {
+  const supabase = getSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('comments')
+    .select(`
+      id,
+      content,
+      rating,
+      created_at,
+      author:profiles!comments_author_id_fkey(id, display_name, avatar_url, email)
+    `)
+    .eq('recipe_id', recipeId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    throw new Error(getRecipeErrorMessage(error));
+  }
+
+  return data.map((comment) => ({
+    id: comment.id,
+    content: comment.content,
+    rating: comment.rating,
+    createdAt: comment.created_at,
+    authorName: comment.author?.display_name || comment.author?.email || 'Anonymous',
+    authorAvatarUrl: comment.author?.avatar_url ?? null,
+  }));
+}
+
+/**
  * Create a new recipe owned by the current user.
  * @param {object} recipeData
  */

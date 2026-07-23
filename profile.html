@@ -28,7 +28,7 @@
               </div>
               <h2 class="h4 mb-1" data-profile-page-name>Your profile</h2>
               <p class="text-secondary mb-3" data-profile-email></p>
-              <label class="btn btn-outline-primary" for="profile-avatar">Upload photo</label>
+              <label class="btn btn-outline-primary" for="profile-avatar"><i class="bi bi-upload me-2" aria-hidden="true"></i>Upload photo</label>
               <input id="profile-avatar" class="d-none" type="file" accept="image/*" data-profile-avatar-input />
               <p class="form-text mt-2 mb-0">JPG, PNG, or WebP up to 5 MB.</p>
             </section>
@@ -38,7 +38,11 @@
             <section class="page-panel">
               <p class="soft-label mb-2">Account settings</p>
               <h2 class="h4 mb-3">Profile details</h2>
-              <p class="text-secondary mb-3" data-profile-status>Loading profile...</p>
+              <div class="d-flex align-items-center gap-2 text-secondary mb-3" data-profile-loading>
+                <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
+                <span>Loading profile...</span>
+              </div>
+              <p class="text-secondary mb-3 d-none" data-profile-status>Ready to update your profile</p>
               <div class="alert d-none" role="alert" data-profile-feedback></div>
               <form class="d-grid gap-3" novalidate>
                 <div>
@@ -50,7 +54,7 @@
                   <textarea id="profile-bio" name="bio" class="form-control" rows="5" placeholder="Tell other cooks about yourself..."></textarea>
                 </div>
                 <div class="d-flex gap-2 flex-wrap">
-                  <button class="btn btn-primary" type="submit" data-profile-save-button>Save profile</button>
+                  <button class="btn btn-primary" type="submit" data-profile-save-button><i class="bi bi-check2-circle me-2" aria-hidden="true"></i>Save profile</button>
                 </div>
               </form>
             </section>

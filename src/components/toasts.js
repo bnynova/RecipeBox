@@ -1,5 +1,6 @@
 import { Toast } from 'bootstrap';
 import { escapeHtml } from '../utils/helpers.js';
+import { icon } from './icons.js';
 
 let toastContainer;
 
@@ -57,7 +58,10 @@ export function showToast(message, options = {}) {
   toastElement.innerHTML = `
     <div class="d-flex">
       <div class="toast-body">
-        <strong class="me-2">${escapeHtml(title ?? getToastTitle(variant))}</strong>
+        <strong class="me-2">${icon(
+          variant === 'error' ? 'bi-exclamation-triangle-fill' : variant === 'success' ? 'bi-check-circle-fill' : 'bi-info-circle-fill',
+          'me-2',
+        )}${escapeHtml(title ?? getToastTitle(variant))}</strong>
         <span>${escapeHtml(message)}</span>
       </div>
       <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
